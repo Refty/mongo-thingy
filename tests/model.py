@@ -19,3 +19,12 @@ def test_get_database_from_table():
         _collection = col
 
     assert isinstance(Foo.database, mongomock.Database)
+
+
+def test_get_table_from_database():
+    db = mongomock.MongoClient().db
+
+    class Foo(Model):
+        _database = db
+
+    assert Foo.collection_name == "foo"
