@@ -8,6 +8,10 @@ class Model(DatabaseThingy):
     def collection(cls):
         return cls._collection or cls._table
 
+    @classproperty
+    def _table(cls):
+        return cls._collection
+
     @classmethod
     def _get_database_from_table(cls, collection):
         return collection.database

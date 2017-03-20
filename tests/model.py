@@ -10,3 +10,12 @@ def test_collection_alias():
         _collection = col
 
     assert Foo.collection == col
+
+
+def test_get_database_from_table():
+    col = mongomock.MongoClient().db.collection
+
+    class Foo(Model):
+        _collection = col
+
+    assert isinstance(Foo.database, mongomock.Database)
