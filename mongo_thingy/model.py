@@ -6,7 +6,11 @@ class Model(DatabaseThingy):
 
     @classproperty
     def collection(cls):
-        return cls._collection or cls._table
+        return cls._collection or cls.table
+
+    @classproperty
+    def collection_name(cls):
+        return cls.collection.name
 
     @classproperty
     def _table(cls):
