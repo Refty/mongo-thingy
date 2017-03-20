@@ -22,6 +22,4 @@ class Model(DatabaseThingy):
 
     @classmethod
     def _get_table_from_database(cls, database):
-        if cls.table_name:
-            return getattr(database, cls.table_name)
-        raise AttributeError("Undefined table.")
+        return getattr(database, cls.table_name)
