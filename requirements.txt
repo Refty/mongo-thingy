@@ -1,1 +1,1 @@
-Thingy==0.1.0
+thingy
