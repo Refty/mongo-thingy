@@ -31,3 +31,6 @@ def connect(*args, **kwargs):
     client = MongoClient(*args, **kwargs)
     Thingy.client = client
     return client
+
+
+__all__ = ["Thingy", "connect"]
