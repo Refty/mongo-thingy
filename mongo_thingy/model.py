@@ -2,6 +2,7 @@ from thingy import classproperty, DatabaseThingy
 
 
 class Model(DatabaseThingy):
+    client = None
     _collection = None
 
     @classproperty
