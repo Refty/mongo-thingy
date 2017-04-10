@@ -7,24 +7,38 @@ class Thingy(DatabaseThingy):
     _collection = None
 
     @classproperty
-    def collection(cls):
-        return cls._collection or cls.table
-
-    @classproperty
-    def collection_name(cls):
-        return cls.collection.name
-
-    @classproperty
     def _table(cls):
         return cls._collection
 
-    @classmethod
-    def _get_database_from_table(cls, collection):
-        return collection.database
+    @classproperty
+    def collection(cls):
+        return cls.table
+
+    @classproperty
+    def collection_name(cls):
+        return cls.table_name
 
     @classmethod
-    def _get_table_from_database(cls, database):
-        return database[cls.table_name]
+    def _get_database(cls, collection, name):
+        if collection:
+            return collection.database
+        if cls.client:
+            if name:
+                return cls.client[name]
+            return cls.client.get_default_database()
+        raise AttributeError("Undefined client.")
+
+    @classmethod
+    def _get_table(cls, database, table_name):
+        return database[table_name]
+
+    @classmethod
+    def _get_database_name(cls, database):
+        return database.name
+
+    @classmethod
+    def _get_table_name(cls, table):
+        return table.name
 
 
 def connect(*args, **kwargs):
