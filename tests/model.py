@@ -3,28 +3,28 @@ import mongomock
 from mongo_thingy import Model
 
 
-def test_collection_alias():
-    col = mongomock.MongoClient().db.collection
+def test_collection():
+    collection = mongomock.MongoClient().database.collection
 
     class Foo(Model):
-        _collection = col
+        _collection = collection
 
-    assert Foo.collection == col
+    assert Foo.collection == collection
 
 
 def test_get_database_from_table():
-    col = mongomock.MongoClient().db.collection
+    collection = mongomock.MongoClient().database.collection
 
     class Foo(Model):
-        _collection = col
+        _collection = collection
 
     assert isinstance(Foo.database, mongomock.Database)
 
 
 def test_get_table_from_database():
-    db = mongomock.MongoClient().db
+    database = mongomock.MongoClient().database
 
     class Foo(Model):
-        _database = db
+        _database = database
 
     assert Foo.collection_name == "foo"
