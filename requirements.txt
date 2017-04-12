@@ -1,5 +1,4 @@
 thingy
 pymongo
-mongomock
 pytest
 pytest-cov
