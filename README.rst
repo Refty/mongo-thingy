@@ -29,7 +29,7 @@ Dead-simple first steps (insert, count, find, find_one, update)
 
 .. code-block:: python
 
-   >>> from mongo-thingy import connect, Thingy
+   >>> from mongo_thingy import connect, Thingy
    >>> connect("mongodb://localhost/test")
 
    >>> class User(Thingy):

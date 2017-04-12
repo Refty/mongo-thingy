@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 from thingy import classproperty, DatabaseThingy
 
+from .cursor import Cursor
+
 
 class Thingy(DatabaseThingy):
     client = None
@@ -41,6 +43,10 @@ class Thingy(DatabaseThingy):
         return table.name
 
     @classmethod
+    def count(cls, *args, **kwargs):
+        return cls.collection.count()
+
+    @classmethod
     def connect(cls, *args, **kwargs):
         cls.client = MongoClient(*args, **kwargs)
 
@@ -48,6 +54,45 @@ class Thingy(DatabaseThingy):
     def disconnect(cls, *args, **kwargs):
         cls.client = None
         cls._database = None
+
+    @classmethod
+    def distinct(cls, *args, **kwargs):
+        return cls.collection.distinct(*args, **kwargs)
+
+    @classmethod
+    def find(cls, *args, **kwargs):
+        return Cursor(cls, *args, **kwargs)
+
+    @classmethod
+    def find_one(cls, *args, **kwargs):
+        result = cls.collection.find_one(*args, **kwargs)
+        if result is not None:
+            return cls(result)
+
+    def __repr__(self):
+        return "{}({})".format(self.__class__.__name__, self.__dict__)
+
+    @property
+    def id(self):
+        return self.__dict__.get("id") or self._id
+
+    @id.setter
+    def id(self, value):
+        if "id" in self.__dict__:
+            self.__dict__["id"] = value
+        else:
+            self._id = value
+
+    def save(self):
+        data = self.__dict__
+        if self.id:
+            self.collection.update({"_id": self.id}, data, upsert=True)
+        else:
+            self.collection.insert(data)
+        return self
+
+    def delete(self):
+        return self.collection.remove({"_id": self.id})
 
 
 connect = Thingy.connect
