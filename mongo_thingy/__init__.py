@@ -40,11 +40,16 @@ class Thingy(DatabaseThingy):
     def _get_table_name(cls, table):
         return table.name
 
+    @classmethod
+    def connect(cls, *args, **kwargs):
+        cls.client = MongoClient(*args, **kwargs)
 
-def connect(*args, **kwargs):
-    client = MongoClient(*args, **kwargs)
-    Thingy.client = client
-    return client
+    @classmethod
+    def disconnect(cls, *args, **kwargs):
+        cls.client = None
+        cls._database = None
 
+
+connect = Thingy.connect
 
 __all__ = ["Thingy", "connect"]

@@ -55,7 +55,24 @@ def test_thingy_get_from_name():
     assert Bar.collection == Bar.database.bar
 
 
-def test_connect():
+@pytest.mark.parametrize("connect", [connect, Thingy.connect])
+def test_thingy_connect_disconnect(connect):
     assert Thingy.client is None
+
     connect()
     assert isinstance(Thingy.client, MongoClient)
+    assert Thingy._database is None
+
+    Thingy.disconnect()
+    assert Thingy.client is None
+
+    connect("mongodb://hostname/database")
+    assert isinstance(Thingy.client, MongoClient)
+    assert Thingy.database
+    assert Thingy.database.name == "database"
+    Thingy.disconnect()
+
+    assert Thingy.client is None
+    assert Thingy._database is None
+    with pytest.raises(AttributeError):
+        Thingy.database
