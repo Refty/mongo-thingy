@@ -61,7 +61,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def find(cls, *args, **kwargs):
-        return Cursor(cls, *args, **kwargs)
+        return Cursor(cls, cls.collection, *args, **kwargs)
 
     @classmethod
     def find_one(cls, *args, **kwargs):
