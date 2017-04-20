@@ -15,7 +15,7 @@ setup(
     author_email="ramnes@1000mercis.com",
     description="The most Pythonic and friendly-yet-powerful way to use MongoDB",
     long_description=get_description(),
-    py_modules=["mongo_thingy"],
+    packages=["mongo_thingy"],
     include_package_data=True,
     zip_safe=False,
     platforms="any",
