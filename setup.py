@@ -25,6 +25,7 @@ setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
+        "Topic :: Database",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ]
 )
