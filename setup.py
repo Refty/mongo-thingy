@@ -19,7 +19,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms="any",
-    install_requires=["thingy>=0.3.0"],
+    install_requires=["thingy>=0.3.0",
+                      "pymongo>=3.0"],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
