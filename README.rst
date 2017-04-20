@@ -96,7 +96,7 @@ Only use certain fields/properties
 
    >>> User.add_view(name="credentials", include=["username", "password"])
    >>> user.view("credentials")
-   {'username': 'mrbar', 'password': 't0ps3cr3t'}
+   {'username': 'MrFoo', 'password': 't0ps3cr3t'}
 
 
 Database/collection "discovery"
@@ -109,9 +109,9 @@ Database/collection "discovery"
 
    >>> connect("mongodb://localhost/")
    >>> AuthenticationGroup.database.name
-   "authentication"
+   'authentication'
    >>> AuthenticationGroup.collection.name
-   "group"
+   'group'
 
 
 Tests
