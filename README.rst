@@ -108,10 +108,8 @@ Database/collection "discovery"
    ...     pass
 
    >>> connect("mongodb://localhost/")
-   >>> AuthenticationGroup.database.name
-   'authentication'
-   >>> AuthenticationGroup.collection.name
-   'group'
+   >>> AuthenticationGroup.collection
+   Collection(Database(MongoClient(host=['localhost:27017'], ...), 'authentication'), 'group')
 
 
 Tests
