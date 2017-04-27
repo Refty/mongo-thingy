@@ -112,6 +112,37 @@ Database/collection "discovery"
    Collection(Database(MongoClient(host=['localhost:27017'], ...), 'authentication'), 'group')
 
 
+Indexes
+-------
+
+Create an index
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   >>> User.create_index("email", sparse=True, unique=True)
+
+
+Add one or more indexes, create later
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   >>> User.add_index("email", sparse=True, unique=True)
+   >>> User.add_index("username")
+
+   >>> User.create_indexes()
+
+
+Create all indexes of all thingies at once
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   >>> from mongo_thingy import create_indexes
+   >>> create_indexes()
+
+
 Tests
 =====
 

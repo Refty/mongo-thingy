@@ -3,7 +3,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from mongo_thingy import connect, Thingy
+from mongo_thingy import Thingy, connect, create_indexes, registry
 
 
 def test_thingy_collection(collection):
@@ -48,6 +48,18 @@ def test_thingy_get_from_name(client):
     assert Bar.collection == Bar.database.bar
 
 
+def test_thingy_add_index(collection):
+    class Foo(Thingy):
+        _collection = collection
+
+    Foo.add_index("foo", unique=True)
+    assert Foo._indexes == [("foo", {"unique": True, "background": True})]
+
+    Foo._indexes = []
+    Foo.add_index("foo", unique=True, background=False)
+    assert Foo._indexes == [("foo", {"unique": True, "background": False})]
+
+
 def test_thingy_count(collection):
     class Foo(Thingy):
         _collection = collection
@@ -80,6 +92,31 @@ def test_thingy_connect_disconnect(connect):
     assert Thingy._database is None
     with pytest.raises(AttributeError):
         Thingy.database
+
+
+def test_thingy_create_index(collection):
+    class Foo(Thingy):
+        _collection = collection
+
+    Foo.create_index("foo", unique=True)
+    assert Foo._indexes == [("foo", {"unique": True, "background": True})]
+
+    indexes = collection.index_information()
+    assert "_id_" in indexes
+    assert "foo_1" in indexes
+    assert len(indexes) == 2
+
+
+def test_thingy_create_indexes(collection):
+    class Foo(Thingy):
+        _collection = collection
+        _indexes = [("foo", {"unique": True, "background": True})]
+
+    Foo.create_indexes()
+    indexes = collection.index_information()
+    assert "_id_" in indexes
+    assert "foo_1" in indexes
+    assert len(indexes) == 2
 
 
 def test_thingy_distinct(collection):
@@ -163,3 +200,20 @@ def test_thingy_delete(collection):
     assert Foo.count() == 1
     foo.delete()
     assert Foo.count() == 0
+
+
+def test_create_indexes(database):
+    del registry[:]
+
+    class Foo(Thingy):
+        _database = database
+        _indexes = [("foo", {})]
+
+    class Bar(Thingy):
+        _database = database
+        _indexes = [("bar", {"unique": True}),
+                    ("baz", {"sparse": True})]
+
+    create_indexes()
+    assert len(Foo.collection.index_information()) == 2
+    assert len(Bar.collection.index_information()) == 3

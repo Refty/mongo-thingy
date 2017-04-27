@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from thingy import classproperty, DatabaseThingy
+from thingy import classproperty, DatabaseThingy, registry
 
 from .cursor import Cursor
 
@@ -43,12 +43,30 @@ class Thingy(DatabaseThingy):
         return table.name
 
     @classmethod
+    def add_index(cls, keys, **kwargs):
+        kwargs.setdefault("background", True)
+        if not hasattr(cls, "_indexes"):
+            cls._indexes = []
+        cls._indexes.append((keys, kwargs))
+
+    @classmethod
     def count(cls, *args, **kwargs):
         return cls.collection.count()
 
     @classmethod
     def connect(cls, *args, **kwargs):
         cls.client = MongoClient(*args, **kwargs)
+
+    @classmethod
+    def create_index(cls, keys, **kwargs):
+        cls.add_index(keys, **kwargs)
+        cls.collection.create_index(keys, **kwargs)
+
+    @classmethod
+    def create_indexes(cls):
+        if hasattr(cls, "_indexes"):
+            for keys, kwargs in cls._indexes:
+                cls.collection.create_index(keys, **kwargs)
 
     @classmethod
     def disconnect(cls, *args, **kwargs):
@@ -94,4 +112,11 @@ class Thingy(DatabaseThingy):
 
 connect = Thingy.connect
 
-__all__ = ["Thingy", "connect"]
+
+def create_indexes():
+    for cls in registry:
+        if issubclass(cls, Thingy):
+            cls.create_indexes()
+
+
+__all__ = ["Thingy", "connect", "create_indexes"]
