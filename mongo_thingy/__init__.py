@@ -69,9 +69,6 @@ class Thingy(DatabaseThingy):
         if result is not None:
             return cls(result)
 
-    def __repr__(self):
-        return "{}({})".format(self.__class__.__name__, self.__dict__)
-
     @property
     def id(self):
         return self.__dict__.get("id") or self._id

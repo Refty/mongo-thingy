@@ -119,12 +119,6 @@ def test_thingy_find_one(collection):
     assert foo.bar == "baz"
 
 
-def test_thingy_repr():
-    thingy = eval(repr(Thingy(bar="baz")))
-    assert isinstance(thingy, Thingy)
-    assert thingy.bar == "baz"
-
-
 def test_thingy_id(collection):
     thingy = Thingy({"_id": "foo"})
     assert thingy._id == thingy.id == "foo"
