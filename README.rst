@@ -99,6 +99,18 @@ Only use certain fields/properties
    {'username': 'MrFoo', 'password': 't0ps3cr3t'}
 
 
+Apply views on cursors
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   >>> for credentials in User.find().view("credentials"):
+   ...     print(credentials)
+   {'username': 'MrFoo', 'password': 't0ps3cr3t'}
+   {'username': 'MrsBar', 'password': '123456789'}
+   ...
+
+
 Database/collection "discovery"
 -------------------------------
 
