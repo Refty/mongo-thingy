@@ -1,4 +1,5 @@
 .. _Thingy: https://github.com/numberly/thingy
+.. _PyMongo: https://github.com/mongodb/mongo-python-driver
 
 ============
 Mongo-Thingy
@@ -6,11 +7,20 @@ Mongo-Thingy
 
 Mongo-Thingy is the most Pythonic and friendly-yet-powerful way to use MongoDB.
 
-Its main goal is give you full advantage of MongoDB schema-less design by NOT
-asking you to define schemas in your code.
+It is an "Object-Document Mapper" that gives you full advantage of MongoDB
+schema-less design by **not** asking you to define schemas in your code, but
+with all the powerful features you would expect from such a library.
 
-It also has cool "side-features" such as views (inherited from Thingy_),
-database/collection "discovery", and more!
+Mongo-Thingy is based on Thingy_ and inherits its views power. It is
+also based on PyMongo_, and it borrows its query language; if you already used
+PyMongo_, using Mongo-Thingy will be child's play!
+
+
+Compatibility
+=============
+
+Mongo-Thingy supports all Python versions from 2.7 to 3.6, and all MongoDB
+versions supported by PyMongo_ (currently 2.4 to 3.4).
 
 
 Install
