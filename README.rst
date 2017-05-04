@@ -5,6 +5,11 @@
 Mongo-Thingy
 ============
 
+.. image:: https://img.shields.io/travis/numberly/mongo-thingy.svg
+   :target: https://travis-ci.org/numberly/mongo-thingy
+
+|
+
 Mongo-Thingy is the most Pythonic and friendly-yet-powerful way to use MongoDB.
 
 It is an "Object-Document Mapper" that gives you full advantage of MongoDB
@@ -19,8 +24,8 @@ PyMongo_, using Mongo-Thingy will be child's play!
 Compatibility
 =============
 
-Mongo-Thingy supports all Python versions from 2.7 to 3.6, and all MongoDB
-versions supported by PyMongo_ (currently 2.4 to 3.4).
+Mongo-Thingy supports all Python versions from 2.7 to 3.6 except 3.2, and all
+MongoDB versions supported by PyMongo_ (currently 2.4 to 3.4).
 
 
 Install
