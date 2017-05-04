@@ -5,6 +5,11 @@
 Mongo-Thingy
 ============
 
+.. image:: https://img.shields.io/travis/numberly/mongo-thingy.svg
+   :target: https://travis-ci.org/numberly/mongo-thingy
+
+|
+
 Mongo-Thingy is the most Pythonic and friendly-yet-powerful way to use MongoDB.
 
 It is an "Object-Document Mapper" that gives you full advantage of MongoDB
