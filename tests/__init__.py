@@ -34,6 +34,15 @@ def test_thingy_names(client):
     assert FooBar.collection_name == "bar"
 
 
+def test_thingy_collection_name(client):
+    class FooBar(Thingy):
+        collection_name = "baz"
+
+    FooBar.client = client
+    assert FooBar.collection == FooBar.client.foo.baz
+    assert FooBar.collection_name == "baz"
+
+
 def test_thingy_get_table_from_database(database):
     class Foo(Thingy):
         _database = database
