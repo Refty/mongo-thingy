@@ -13,12 +13,18 @@ class Thingy(DatabaseThingy):
         return cls._collection
 
     @classproperty
+    def table_name(cls):
+        return cls.collection_name
+
+    @classproperty
     def collection(cls):
         return cls.table
 
     @classproperty
     def collection_name(cls):
-        return cls.table_name
+        if cls._table:
+            return cls._get_table_name(cls._table)
+        return cls.names[-1].lower()
 
     @classmethod
     def _get_database(cls, collection, name):
