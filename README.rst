@@ -7,6 +7,8 @@ Mongo-Thingy
 
 .. image:: https://img.shields.io/travis/numberly/mongo-thingy.svg
    :target: https://travis-ci.org/numberly/mongo-thingy
+.. image:: https://img.shields.io/coveralls/numberly/mongo-thingy.svg
+   :target: https://coveralls.io/github/numberly/mongo-thingy
 
 |
 
