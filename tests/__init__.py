@@ -164,6 +164,13 @@ def test_thingy_find_one(collection):
     assert isinstance(foo, Foo)
     assert foo.bar == "baz"
 
+    foo = Foo.find_one({"bar": "qux"})
+    assert isinstance(foo, Foo)
+    assert foo.bar == "qux"
+
+    foo = Foo.find_one({"bar": "quux"})
+    assert foo is None
+
 
 def test_thingy_id(collection):
     thingy = Thingy({"_id": "foo"})
