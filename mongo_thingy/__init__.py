@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 from thingy import classproperty, DatabaseThingy, registry
 
 from mongo_thingy.cursor import Cursor
@@ -88,6 +88,13 @@ class Thingy(DatabaseThingy):
     @classmethod
     def find_one(cls, *args, **kwargs):
         result = cls.collection.find_one(*args, **kwargs)
+        if result is not None:
+            return cls(result)
+
+    @classmethod
+    def find_one_and_replace(cls, *args, **kwargs):
+        kwargs.setdefault("return_document", ReturnDocument.AFTER)
+        result = cls.collection.find_one_and_replace(*args, **kwargs)
         if result is not None:
             return cls(result)
 

@@ -172,6 +172,17 @@ def test_thingy_find_one(collection):
     assert foo is None
 
 
+def test_thingy_find_one_and_replace(collection):
+    class Foo(Thingy):
+        _collection = collection
+
+    collection.insert_many([{"bar": "baz"},
+                            {"bar": "qux"}])
+    foo = Foo.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
+    assert isinstance(foo, Foo)
+    assert foo.bar == "baaz"
+
+
 def test_thingy_id(collection):
     thingy = Thingy({"_id": "foo"})
     assert thingy._id == thingy.id == "foo"
