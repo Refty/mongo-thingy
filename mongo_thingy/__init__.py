@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from thingy import classproperty, DatabaseThingy, registry
 
-from .cursor import Cursor
+from mongo_thingy.cursor import Cursor
 
 
 class Thingy(DatabaseThingy):
