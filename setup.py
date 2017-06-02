@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms="any",
-    install_requires=["thingy>=0.5.2",
+    install_requires=["thingy>=0.6.0",
                       "pymongo>=3.0"],
     classifiers=[
         "Intended Audience :: Developers",
