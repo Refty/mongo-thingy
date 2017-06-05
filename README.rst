@@ -5,6 +5,10 @@
 Mongo-Thingy
 ============
 
+.. image:: https://img.shields.io/pypi/v/mongo-thingy.svg
+   :target: https://pypi.python.org/pypi/Mongo-Thingy
+.. image:: https://img.shields.io/github/license/numberly/mongo-thingy.svg
+   :target: https://github.com/numberly/mongo-thingy/blob/master/LICENSE
 .. image:: https://img.shields.io/travis/numberly/mongo-thingy.svg
    :target: https://travis-ci.org/numberly/mongo-thingy
 .. image:: https://img.shields.io/coveralls/numberly/mongo-thingy.svg
