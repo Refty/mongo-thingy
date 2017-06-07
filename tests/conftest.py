@@ -2,6 +2,7 @@ import pytest
 from pymongo import MongoClient
 
 from mongo_thingy import Thingy
+from mongo_thingy.versioned import Version, Versioned
 
 
 @pytest.fixture
@@ -29,4 +30,29 @@ def TestThingy(collection):
     return TestThingy
 
 
-__all__ = ["TestThingy", "client", "database", "collection"]
+@pytest.fixture
+def TestVersion(database):
+    class TestVersion(Version):
+        _database = database
+
+    return TestVersion
+
+
+@pytest.fixture
+def TestVersioned(TestVersion):
+    class TestVersioned(Versioned):
+        _version_cls = TestVersion
+
+    return TestVersioned
+
+
+@pytest.fixture
+def TestVersionedThingy(TestVersioned, TestThingy):
+    class TestVersionedThingy(TestVersioned, TestThingy):
+        pass
+
+    return TestVersionedThingy
+
+
+__all__ = ["TestThingy", "TestVersion", "TestVersioned", "TestVersionedThingy",
+           "client", "database", "collection"]
