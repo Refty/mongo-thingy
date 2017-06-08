@@ -6,18 +6,13 @@ from pymongo.database import Database
 from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
 
 
-def test_thingy_collection(collection):
-    class Foo(Thingy):
-        _collection = collection
-
-    assert Foo.collection == collection
+def test_thingy_collection(TestThingy, collection):
+    assert TestThingy.collection == collection
 
 
-def test_thingy_get_database_from_table(collection):
-    class Foo(Thingy):
-        _collection = collection
-
-    assert isinstance(Foo.database, Database)
+def test_thingy_get_database_from_table(TestThingy, collection):
+    assert isinstance(TestThingy.database, Database)
+    assert TestThingy.database == TestThingy.collection.database
 
 
 def test_thingy_names(client):
@@ -69,15 +64,12 @@ def test_thingy_add_index(collection):
     assert Foo._indexes == [("foo", {"unique": True, "background": False})]
 
 
-def test_thingy_count(collection):
-    class Foo(Thingy):
-        _collection = collection
-
+def test_thingy_count(TestThingy, collection):
     collection.insert({"bar": "baz"})
-    assert Foo.count() == 1
+    assert TestThingy.count() == 1
 
     collection.remove()
-    assert Foo.count() == 0
+    assert TestThingy.count() == 0
 
 
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
@@ -104,12 +96,9 @@ def test_thingy_connect_disconnect(connect, disconnect):
         Thingy.database
 
 
-def test_thingy_create_index(collection):
-    class Foo(Thingy):
-        _collection = collection
-
-    Foo.create_index("foo", unique=True)
-    assert Foo._indexes == [("foo", {"unique": True, "background": True})]
+def test_thingy_create_index(TestThingy, collection):
+    TestThingy.create_index("foo", unique=True)
+    assert TestThingy._indexes == [("foo", {"unique": True, "background": True})]
 
     indexes = collection.index_information()
     assert "_id_" in indexes
@@ -117,9 +106,8 @@ def test_thingy_create_index(collection):
     assert len(indexes) == 2
 
 
-def test_thingy_create_indexes(collection):
-    class Foo(Thingy):
-        _collection = collection
+def test_thingy_create_indexes(TestThingy, collection):
+    class Foo(TestThingy):
         _indexes = [("foo", {"unique": True, "background": True})]
 
     Foo.create_indexes()
@@ -129,59 +117,47 @@ def test_thingy_create_indexes(collection):
     assert len(indexes) == 2
 
 
-def test_thingy_distinct(collection):
-    class Foo(Thingy):
-        _collection = collection
-
+def test_thingy_distinct(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
-    assert Foo.distinct("bar") == ["baz", "qux"]
+    assert TestThingy.distinct("bar") == ["baz", "qux"]
 
     collection.insert({"bar": None})
-    assert None in Foo.distinct("bar")
+    assert None in TestThingy.distinct("bar")
 
 
-def test_thingy_find(collection):
-    class Foo(Thingy):
-        _collection = collection
-
+def test_thingy_find(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
-    cursor = Foo.find()
+    cursor = TestThingy.find()
     assert cursor.count() == 2
 
-    foo = cursor.next()
-    assert isinstance(foo, Foo)
-    assert foo.bar == "baz"
+    thingy = cursor.next()
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baz"
 
 
-def test_thingy_find_one(collection):
-    class Foo(Thingy):
-        _collection = collection
-
+def test_thingy_find_one(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
-    foo = Foo.find_one()
-    assert isinstance(foo, Foo)
-    assert foo.bar == "baz"
+    thingy = TestThingy.find_one()
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baz"
 
-    foo = Foo.find_one({"bar": "qux"})
-    assert isinstance(foo, Foo)
-    assert foo.bar == "qux"
+    thingy = TestThingy.find_one({"bar": "qux"})
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "qux"
 
-    foo = Foo.find_one({"bar": "quux"})
-    assert foo is None
+    thingy = TestThingy.find_one({"bar": "quux"})
+    assert thingy is None
 
 
-def test_thingy_find_one_and_replace(collection):
-    class Foo(Thingy):
-        _collection = collection
-
+def test_thingy_find_one_and_replace(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
-    foo = Foo.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
-    assert isinstance(foo, Foo)
-    assert foo.bar == "baaz"
+    thingy = TestThingy.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baaz"
 
 
 def test_thingy_id(collection):
@@ -204,30 +180,24 @@ def test_thingy_id(collection):
     assert thingy._id == "qux"
 
 
-def test_thingy_save(collection):
-    class Foo(Thingy):
-        _collection = collection
+def test_thingy_save(TestThingy, collection):
+    thingy = TestThingy(bar="baz")
+    assert TestThingy.count() == 0
+    thingy.save()
+    assert TestThingy.count() == 1
+    assert isinstance(thingy._id, ObjectId)
 
-    foo = Foo(bar="baz")
-    assert Foo.count() == 0
-    foo.save()
-    assert Foo.count() == 1
-    assert isinstance(foo._id, ObjectId)
-
-    foo = Foo(id="bar", bar="qux").save()
-    assert isinstance(foo, Foo)
-    assert foo.bar == "qux"
-    assert foo._id == "bar"
+    thingy = TestThingy(id="bar", bar="qux").save()
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "qux"
+    assert thingy._id == "bar"
 
 
-def test_thingy_delete(collection):
-    class Foo(Thingy):
-        _collection = collection
-
-    foo = Foo(bar="baz").save()
-    assert Foo.count() == 1
-    foo.delete()
-    assert Foo.count() == 0
+def test_thingy_delete(TestThingy, collection):
+    thingy = TestThingy(bar="baz").save()
+    assert TestThingy.count() == 1
+    thingy.delete()
+    assert TestThingy.count() == 0
 
 
 def test_create_indexes(database):
