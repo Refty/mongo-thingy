@@ -122,6 +122,7 @@ class Thingy(DatabaseThingy):
 
 
 connect = Thingy.connect
+disconnect = Thingy.disconnect
 
 
 def create_indexes():

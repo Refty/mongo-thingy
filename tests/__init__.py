@@ -3,7 +3,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from mongo_thingy import Thingy, connect, create_indexes, registry
+from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
 
 
 def test_thingy_collection(collection):
@@ -81,21 +81,22 @@ def test_thingy_count(collection):
 
 
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
-def test_thingy_connect_disconnect(connect):
+@pytest.mark.parametrize("disconnect", [disconnect, Thingy.disconnect])
+def test_thingy_connect_disconnect(connect, disconnect):
     assert Thingy.client is None
 
     connect()
     assert isinstance(Thingy.client, MongoClient)
     assert Thingy._database is None
 
-    Thingy.disconnect()
+    disconnect()
     assert Thingy.client is None
 
     connect("mongodb://hostname/database")
     assert isinstance(Thingy.client, MongoClient)
     assert Thingy.database
     assert Thingy.database.name == "database"
-    Thingy.disconnect()
+    disconnect()
 
     assert Thingy.client is None
     assert Thingy._database is None
