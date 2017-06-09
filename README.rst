@@ -22,9 +22,13 @@ It is an "Object-Document Mapper" that gives you full advantage of MongoDB
 schema-less design by **not** asking you to define schemas in your code, but
 with all the powerful features you would expect from such a library.
 
-Mongo-Thingy is based on Thingy_ and inherits its views power. It is
-also based on PyMongo_, and it borrows its query language; if you already used
-PyMongo_, using Mongo-Thingy will be child's play!
+Mongo-Thingy has:
+
+- a simple and robust code base, with 100% coverage and few dependencies;
+- PyMongo_ query language - no need to learn yet another one;
+- Thingy_ views - control what to show, and create fields based on other fields;
+- versioning (optional) - rollback to any point in any thingy history;
+- and more!
 
 
 Compatibility
@@ -66,7 +70,7 @@ Connect, insert and find thingies
    User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 42})
 
 
-Update thingies
+Update a thingy
 ~~~~~~~~~~~~~~~
 
 .. code-block:: python
@@ -78,8 +82,8 @@ Update thingies
    User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 1337})
 
 
-Thingy's views power
---------------------
+Thingy views power
+------------------
 
 Complete information with properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
