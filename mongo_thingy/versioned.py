@@ -12,7 +12,7 @@ class Version(Thingy):
         return super(Version, self).save()
 
 
-Version.add_index([("document._id", DESCENDING), ("origin", DESCENDING)])
+Version.add_index([("document._id", DESCENDING), ("document_type", DESCENDING)])
 
 
 class Versioned(object):
@@ -20,7 +20,7 @@ class Versioned(object):
 
     def get_versions(self, **kwargs):
         filter = {"document._id": self.id,
-                  "origin": self.collection_name}
+                  "document_type": type(self).__name__}
         filter.update(kwargs)
         return self._version_cls.find(filter)
 
@@ -43,8 +43,8 @@ class Versioned(object):
 
     def save(self, author=None):
         result = super(Versioned, self).save()
-        version = self._version_cls(author=author, origin=self.collection_name,
-                                    document=self.__dict__)
+        version = self._version_cls(document_type=type(self).__name__,
+                                    document=self.__dict__, author=author)
         version.save()
         return result
 

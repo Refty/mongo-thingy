@@ -9,7 +9,7 @@ def test_version_save(TestVersion):
 def test_version_indexes(TestVersion):
     TestVersion.create_indexes()
     indexes = TestVersion.collection.index_information()
-    assert "document._id_-1_origin_-1" in indexes
+    assert "document._id_-1_document_type_-1" in indexes
 
 
 def test_versioned_get_versions(TestVersionedThingy):
@@ -19,7 +19,7 @@ def test_versioned_get_versions(TestVersionedThingy):
 
     version = cursor[0]
     assert version.document == thingy.__dict__
-    assert version.origin == thingy.collection_name
+    assert version.document_type == "TestVersionedThingy"
 
 
 def test_versioned_version(TestVersionedThingy):
