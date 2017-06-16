@@ -7,6 +7,7 @@ from mongo_thingy.cursor import Cursor
 class Thingy(DatabaseThingy):
     client = None
     _collection = None
+    _cursor_cls = Cursor
 
     @classproperty
     def _table(cls):
@@ -83,7 +84,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def find(cls, *args, **kwargs):
-        return Cursor(cls, cls.collection, *args, **kwargs)
+        return cls._cursor_cls(cls, cls.collection, *args, **kwargs)
 
     @classmethod
     def find_one(cls, *args, **kwargs):
