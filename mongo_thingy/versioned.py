@@ -3,9 +3,23 @@ from datetime import datetime
 from pymongo import ASCENDING, DESCENDING
 
 from mongo_thingy import Thingy
+from mongo_thingy.cursor import Cursor
+
+
+class VersionCursor(Cursor):
+
+    def __init__(self, *args, **kwargs):
+        self.thingy = kwargs.pop("thingy", None)
+        super(VersionCursor, self).__init__(*args, **kwargs)
+
+    def __getitem__(self, index):
+        if index < 0 and self.thingy:
+            index = self.thingy.version + index
+        return super(VersionCursor, self).__getitem__(index)
 
 
 class Version(Thingy):
+    _cursor_cls = VersionCursor
 
     def save(self):
         self.creation_date = datetime.utcnow()
@@ -22,7 +36,7 @@ class Versioned(object):
         filter = {"document._id": self.id,
                   "document_type": type(self).__name__}
         filter.update(kwargs)
-        return self._version_cls.find(filter)
+        return self._version_cls.find(filter, thingy=self)
 
     @property
     def version(self):
@@ -37,7 +51,7 @@ class Versioned(object):
         if version <= 1:
             previous_version = {"_id": self.id}
         else:
-            previous_version = self.versions[self.version - 2].document
+            previous_version = self.versions[-2].document
         self.__dict__ = previous_version
         return self.save()
 

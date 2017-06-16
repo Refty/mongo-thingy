@@ -1,3 +1,5 @@
+import pytest
+
 from mongo_thingy.cursor import Cursor
 
 
@@ -46,6 +48,12 @@ def test_versioned_versions(TestVersionedThingy):
 
     assert thingy.versions[0].document.get("bar") == "baz"
     assert thingy.versions[1].document.get("bar") == "qux"
+
+    assert thingy.versions[-1].id == thingy.versions[1].id
+    assert thingy.versions[-2].id == thingy.versions[0].id
+
+    with pytest.raises(IndexError):
+        thingy.versions[-3]
 
 
 def test_versioned_rollback(TestVersionedThingy):
