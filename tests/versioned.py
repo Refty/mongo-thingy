@@ -22,6 +22,16 @@ def test_versioned_get_versions(TestVersionedThingy):
     assert version.document_type == "TestVersionedThingy"
 
 
+def test_versioned_author(TestVersionedThingy):
+    thingy = TestVersionedThingy({"bar": "baz"}).save()
+    assert thingy.versions[0].author is None
+    assert "author" not in thingy.versions[0].__dict__
+
+    thingy.bar = "qux"
+    thingy.save(author={"name": "foo"})
+    assert thingy.versions[1].author == {"name": "foo"}
+
+
 def test_versioned_version(TestVersionedThingy):
     thingy = TestVersionedThingy({"bar": "baz"})
     assert thingy.version == 0

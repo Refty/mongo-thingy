@@ -44,7 +44,9 @@ class Versioned(object):
     def save(self, author=None):
         result = super(Versioned, self).save()
         version = self._version_cls(document_type=type(self).__name__,
-                                    document=self.__dict__, author=author)
+                                    document=self.__dict__)
+        if author:
+            version.author = author
         version.save()
         return result
 
