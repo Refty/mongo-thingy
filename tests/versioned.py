@@ -64,6 +64,9 @@ def test_versioned_versions_operation(TestVersionedThingy):
     thingy.save()
     assert thingy.versions[1].operation == "update"
 
+    thingy.delete()
+    assert thingy.versions[2].operation == "delete"
+
 
 def test_versioned_versioned(TestVersionedThingy):
     thingy = TestVersionedThingy({"bar": "baz"})

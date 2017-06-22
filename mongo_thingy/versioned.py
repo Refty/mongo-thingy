@@ -26,8 +26,11 @@ class Version(Thingy):
         if not thingy.versioned:
             operation = "create"
 
-        version = cls(document=thingy.__dict__, document_id=thingy.id,
-                      document_type=type(thingy).__name__, operation=operation)
+        version = cls(document_id=thingy.id,
+                      document_type=type(thingy).__name__,
+                      operation=operation)
+        if operation != "delete":
+            version.document = thingy.__dict__
         if author:
             version.author = author
         return version
@@ -73,6 +76,13 @@ class Versioned(object):
     def save(self, author=None):
         result = super(Versioned, self).save()
         version = self._version_cls.from_thingy(self, author=author)
+        version.save()
+        return result
+
+    def delete(self, author=None):
+        result = super(Versioned, self).delete()
+        version = self._version_cls.from_thingy(self, author=author,
+                                                operation="delete")
         version.save()
         return result
 
