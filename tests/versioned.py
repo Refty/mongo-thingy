@@ -11,7 +11,7 @@ def test_version_save(TestVersion):
 def test_version_indexes(TestVersion):
     TestVersion.create_indexes()
     indexes = TestVersion.collection.index_information()
-    assert "document._id_-1_document_type_-1" in indexes
+    assert "document_id_-1_document_type_-1" in indexes
 
 
 def test_versioned_get_versions(TestVersionedThingy):
