@@ -21,6 +21,17 @@ class VersionCursor(Cursor):
 class Version(Thingy):
     _cursor_cls = VersionCursor
 
+    @classmethod
+    def from_thingy(cls, thingy, author=None, operation="update"):
+        if not thingy.versioned:
+            operation = "create"
+
+        version = cls(document=thingy.__dict__, document_id=thingy.id,
+                      document_type=type(thingy).__name__, operation=operation)
+        if author:
+            version.author = author
+        return version
+
     def save(self):
         self.creation_date = datetime.utcnow()
         return super(Version, self).save()
@@ -61,11 +72,7 @@ class Versioned(object):
 
     def save(self, author=None):
         result = super(Versioned, self).save()
-        version = self._version_cls(document_id=self.id,
-                                    document_type=type(self).__name__,
-                                    document=self.__dict__)
-        if author:
-            version.author = author
+        version = self._version_cls.from_thingy(self, author=author)
         version.save()
         return result
 

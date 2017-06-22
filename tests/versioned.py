@@ -56,6 +56,15 @@ def test_versioned_versions(TestVersionedThingy):
         thingy.versions[-3]
 
 
+def test_versioned_versions_operation(TestVersionedThingy):
+    thingy = TestVersionedThingy({"bar": "baz"}).save()
+    assert thingy.versions[0].operation == "create"
+
+    thingy.bar = "qux"
+    thingy.save()
+    assert thingy.versions[1].operation == "update"
+
+
 def test_versioned_versioned(TestVersionedThingy):
     thingy = TestVersionedThingy({"bar": "baz"})
     assert thingy.versioned is False
