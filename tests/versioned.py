@@ -56,6 +56,17 @@ def test_versioned_versions(TestVersionedThingy):
         thingy.versions[-3]
 
 
+def test_versioned_versioned(TestVersionedThingy):
+    thingy = TestVersionedThingy({"bar": "baz"})
+    assert thingy.versioned is False
+
+    thingy.bar = "qux"
+    assert thingy.versioned is False
+
+    thingy.save()
+    assert thingy.versioned is True
+
+
 def test_versioned_rollback(TestVersionedThingy):
     thingy = TestVersionedThingy({"bar": "baz"}).save()
     assert thingy.version == 1

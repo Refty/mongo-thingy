@@ -43,6 +43,10 @@ class Versioned(object):
         return self.get_versions().count()
 
     @property
+    def versioned(self):
+        return bool(self.get_versions().limit(1).count(with_limit_and_skip=True))
+
+    @property
     def versions(self):
         return self.get_versions().sort("_id", ASCENDING)
 
