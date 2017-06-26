@@ -161,7 +161,7 @@ Versioning
    >>> article.version
    2
 
-   >>> article.rollback()
+   >>> article.revert()
    Article({'_id': ObjectId('...'), 'content': 'Cogito ergo sum'})
    >>> article.version
    3
