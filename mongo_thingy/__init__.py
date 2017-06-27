@@ -1,3 +1,5 @@
+import collections
+
 from pymongo import MongoClient, ReturnDocument
 from thingy import classproperty, DatabaseThingy, registry
 
@@ -87,10 +89,16 @@ class Thingy(DatabaseThingy):
         return cls._cursor_cls(cls, cls.collection, *args, **kwargs)
 
     @classmethod
-    def find_one(cls, *args, **kwargs):
-        result = cls.collection.find_one(*args, **kwargs)
-        if result is not None:
-            return cls(result)
+    def find_one(cls, filter=None, *args, **kwargs):
+        if filter is not None and not isinstance(filter, collections.Mapping):
+            filter = {"_id": filter}
+
+        max_time_ms = kwargs.pop("max_time_ms", None)
+        cursor = cls.find(filter, *args, **kwargs).max_time_ms(max_time_ms)
+
+        for result in cursor.limit(-1):
+            return result
+        return None
 
     @classmethod
     def find_one_and_replace(cls, *args, **kwargs):

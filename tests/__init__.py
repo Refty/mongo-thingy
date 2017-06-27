@@ -144,6 +144,14 @@ def test_thingy_find_one(TestThingy, collection):
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baz"
 
+    thingy = TestThingy.find_one(max_time_ms=10)
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baz"
+
+    thingy = TestThingy.find_one(thingy.id)
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baz"
+
     thingy = TestThingy.find_one({"bar": "qux"})
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "qux"
