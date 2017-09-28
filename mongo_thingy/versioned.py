@@ -40,7 +40,8 @@ class Revision(Thingy):
         return super(Revision, self).save()
 
 
-Revision.add_index([("document_id", DESCENDING), ("document_type", DESCENDING)])
+Revision.add_index([("document_id", DESCENDING),
+                    ("document_type", DESCENDING)])
 
 
 class Versioned(object):
@@ -58,7 +59,8 @@ class Versioned(object):
 
     @property
     def versioned(self):
-        return bool(self.get_revisions().limit(1).count(with_limit_and_skip=True))
+        count = self.get_revisions().limit(1).count(with_limit_and_skip=True)
+        return bool(count)
 
     @property
     def revisions(self):

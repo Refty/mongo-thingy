@@ -3,7 +3,8 @@ from pymongo.cursor import Cursor as MongoCursor
 
 class Cursor(MongoCursor):
 
-    def __init__(self, thingy_cls, collection, filter=None, view=None, *args, **kwargs):
+    def __init__(self, thingy_cls, collection, filter=None, view=None,
+                 *args, **kwargs):
         self.thingy_cls = thingy_cls
         if view is not None:
             view = self.get_view(view)

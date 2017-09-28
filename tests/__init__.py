@@ -98,7 +98,9 @@ def test_thingy_connect_disconnect(connect, disconnect):
 
 def test_thingy_create_index(TestThingy, collection):
     TestThingy.create_index("foo", unique=True)
-    assert TestThingy._indexes == [("foo", {"unique": True, "background": True})]
+    assert TestThingy._indexes == [
+        ("foo", {"unique": True, "background": True})
+    ]
 
     indexes = collection.index_information()
     assert "_id_" in indexes

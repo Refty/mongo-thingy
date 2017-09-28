@@ -5,8 +5,14 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "pypy"
+  - "pypy3"
 services:
   - mongodb
-install: "pip install -r requirements.txt coveralls"
+install:
+  - pip install -r requirements.txt
+  - pip install flake8
+  - pip install coveralls
+before_script: flake8
 script: pytest
 after_success: coveralls

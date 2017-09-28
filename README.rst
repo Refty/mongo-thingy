@@ -34,8 +34,12 @@ Mongo-Thingy has:
 Compatibility
 =============
 
-Mongo-Thingy supports all Python versions from 2.7 to 3.6 except 3.2, and all
-MongoDB versions supported by PyMongo_ (currently 2.4 to 3.4).
+Mongo-Thingy is pure-Python.
+
+It supports all Python and MongoDB versions supported by PyMongo_, namely:
+
+- CPython 2.6, 2.7, 3.4+, PyPy, and PyPy3
+- MongoDB 2.6, 3.0, 3.2, and 3.4
 
 
 Install
