@@ -7,7 +7,7 @@ from mongo_thingy.cursor import Cursor
 
 
 class Thingy(DatabaseThingy):
-    client = None
+    _client = None
     _collection = None
     _cursor_cls = Cursor
 
@@ -31,10 +31,10 @@ class Thingy(DatabaseThingy):
     def _get_database(cls, collection, name):
         if collection:
             return collection.database
-        if cls.client:
+        if cls._client:
             if name:
-                return cls.client[name]
-            return cls.client.get_default_database()
+                return cls._client[name]
+            return cls._client.get_default_database()
         raise AttributeError("Undefined client.")
 
     @classmethod
@@ -62,7 +62,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def connect(cls, *args, **kwargs):
-        cls.client = MongoClient(*args, **kwargs)
+        cls._client = MongoClient(*args, **kwargs)
 
     @classmethod
     def create_index(cls, keys, **kwargs):
@@ -77,7 +77,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def disconnect(cls, *args, **kwargs):
-        cls.client = None
+        cls._client = None
         cls._database = None
 
     @classmethod

@@ -22,9 +22,9 @@ def test_thingy_names(client):
     with pytest.raises(AttributeError):
         FooBar.database
 
-    FooBar.client = client
-    assert FooBar.database == FooBar.client.foo
-    assert FooBar.collection == FooBar.client.foo.bar
+    FooBar._client = client
+    assert FooBar.database == FooBar._client.foo
+    assert FooBar.collection == FooBar._client.foo.bar
     assert FooBar.database_name == "foo"
     assert FooBar.collection_name == "bar"
 
@@ -33,8 +33,8 @@ def test_thingy_collection_name(client):
     class FooBar(Thingy):
         collection_name = "baz"
 
-    FooBar.client = client
-    assert FooBar.collection == FooBar.client.foo.baz
+    FooBar._client = client
+    assert FooBar.collection == FooBar._client.foo.baz
     assert FooBar.collection_name == "baz"
 
 
@@ -75,22 +75,22 @@ def test_thingy_count(TestThingy, collection):
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
 @pytest.mark.parametrize("disconnect", [disconnect, Thingy.disconnect])
 def test_thingy_connect_disconnect(connect, disconnect):
-    assert Thingy.client is None
+    assert Thingy._client is None
 
     connect()
-    assert isinstance(Thingy.client, MongoClient)
+    assert isinstance(Thingy._client, MongoClient)
     assert Thingy._database is None
 
     disconnect()
-    assert Thingy.client is None
+    assert Thingy._client is None
 
     connect("mongodb://hostname/database")
-    assert isinstance(Thingy.client, MongoClient)
+    assert isinstance(Thingy._client, MongoClient)
     assert Thingy.database
     assert Thingy.database.name == "database"
     disconnect()
 
-    assert Thingy.client is None
+    assert Thingy._client is None
     assert Thingy._database is None
     with pytest.raises(AttributeError):
         Thingy.database
