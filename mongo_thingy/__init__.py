@@ -8,7 +8,7 @@ from mongo_thingy.cursor import Cursor
 
 
 class Thingy(DatabaseThingy):
-    client = None
+    _client = None
     _collection = None
     _collection_name = None
     _cursor_cls = Cursor
@@ -32,6 +32,10 @@ class Thingy(DatabaseThingy):
     @classproperty
     def collection_name(cls):
         return cls.get_table_name()
+
+    @classproperty
+    def client(cls):
+        return cls._client
 
     @classmethod
     def _get_database(cls, collection, name):
@@ -66,9 +70,9 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def connect(cls, *args, **kwargs):
-        cls.client = MongoClient(*args, **kwargs)
+        cls._client = MongoClient(*args, **kwargs)
         try:
-            cls._database = cls.client.get_default_database()
+            cls._database = cls._client.get_default_database()
         except ConfigurationError:
             pass
 
@@ -85,7 +89,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def disconnect(cls, *args, **kwargs):
-        cls.client = None
+        cls._client = None
         cls._database = None
 
     @classmethod

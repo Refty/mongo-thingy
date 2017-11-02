@@ -20,7 +20,7 @@ def test_thingy_names(client):
     with pytest.raises(AttributeError):
         FooBar.database
 
-    FooBar.client = client
+    FooBar._client = client
     assert FooBar.database == FooBar.client.foo
     assert FooBar.collection == FooBar.client.foo.bar
     assert FooBar.database_name == "foo"
@@ -29,9 +29,9 @@ def test_thingy_names(client):
 
 def test_thingy_database_name(client, database):
     class FooBar(Thingy):
+        _client = client
         _database_name = "fuu"
 
-    FooBar.client = client
     assert FooBar.database_name == "fuu"
 
     class FooBar(Thingy):
@@ -42,9 +42,9 @@ def test_thingy_database_name(client, database):
 
 def test_thingy_collection_name(client, collection):
     class FooBar(Thingy):
+        _client = client
         _collection_name = "baz"
 
-    FooBar.client = client
     assert FooBar.collection_name == "baz"
 
     class FooBar(Thingy):
@@ -69,9 +69,8 @@ def test_thingy_collection_from_database(database):
 
 def test_thingy_database_from_name(client):
     class FooBar(Thingy):
-        pass
+        _client = client
 
-    FooBar.client = client
     assert FooBar.database == client.foo
 
 
@@ -259,9 +258,8 @@ def test_create_indexes(database):
 
 def test_github_issue_6(client):
     class SynchronisedSwimming(Thingy):
-        pass
+        _client = client
 
-    SynchronisedSwimming.client = client
     assert SynchronisedSwimming.database.name == "synchronised"
     assert SynchronisedSwimming.collection.name == "swimming"
 
