@@ -1,18 +1,16 @@
 import pytest
 from bson import ObjectId
 from pymongo import MongoClient
-from pymongo.database import Database
 
 from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
 
 
+def test_thingy_database(TestThingy, database):
+    assert TestThingy.database == database
+
+
 def test_thingy_collection(TestThingy, collection):
     assert TestThingy.collection == collection
-
-
-def test_thingy_get_database_from_table(TestThingy, collection):
-    assert isinstance(TestThingy.database, Database)
-    assert TestThingy.database == TestThingy.collection.database
 
 
 def test_thingy_names(client):
@@ -29,27 +27,51 @@ def test_thingy_names(client):
     assert FooBar.collection_name == "bar"
 
 
+def test_thingy_database_name(client):
+    class FooBar(Thingy):
+        database_name = "fuu"
+
+    FooBar.client = client
+    assert FooBar.database_name == "fuu"
+    assert FooBar.database == FooBar.client.fuu
+
+
 def test_thingy_collection_name(client):
     class FooBar(Thingy):
         collection_name = "baz"
 
     FooBar.client = client
-    assert FooBar.collection == FooBar.client.foo.baz
     assert FooBar.collection_name == "baz"
+    assert FooBar.collection == FooBar.client.foo.baz
 
 
-def test_thingy_get_table_from_database(database):
+def test_thingy_database_from_collection(collection):
+    class Foo(Thingy):
+        _collection = collection
+
+    assert Foo.database == collection.database
+
+
+def test_thingy_collection_from_database(database):
     class Foo(Thingy):
         _database = database
 
-    assert Foo.collection_name == "foo"
+    assert Foo.collection == database.foo
 
 
-def test_thingy_get_from_name(client):
+def test_thingy_database_from_name(client):
+    class FooBar(Thingy):
+        pass
+
+    FooBar.client = client
+    assert FooBar.database == client.foo
+
+
+def test_thingy_collection_from_name(database):
     class Bar(Thingy):
-        _database = client["foo"]
+        _database = database
 
-    assert Bar.collection == Bar.database.bar
+    assert Bar.collection == database.bar
 
 
 def test_thingy_add_index(collection):
