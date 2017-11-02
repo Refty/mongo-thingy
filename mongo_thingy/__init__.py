@@ -1,6 +1,7 @@
 import collections
 
 from pymongo import MongoClient, ReturnDocument
+from pymongo.errors import ConfigurationError
 from thingy import classproperty, DatabaseThingy, registry
 
 from mongo_thingy.cursor import Cursor
@@ -36,10 +37,8 @@ class Thingy(DatabaseThingy):
     def _get_database(cls, collection, name):
         if collection:
             return collection.database
-        if cls.client:
-            if name:
-                return cls.client[name]
-            return cls.client.get_default_database()
+        if cls.client and name:
+            return cls.client[name]
         raise AttributeError("Undefined client.")
 
     @classmethod
@@ -68,6 +67,10 @@ class Thingy(DatabaseThingy):
     @classmethod
     def connect(cls, *args, **kwargs):
         cls.client = MongoClient(*args, **kwargs)
+        try:
+            cls._database = cls.client.get_default_database()
+        except ConfigurationError:
+            pass
 
     @classmethod
     def create_index(cls, keys, **kwargs):
