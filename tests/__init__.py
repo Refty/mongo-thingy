@@ -27,22 +27,30 @@ def test_thingy_names(client):
     assert FooBar.collection_name == "bar"
 
 
-def test_thingy_database_name(client):
+def test_thingy_database_name(client, database):
     class FooBar(Thingy):
-        database_name = "fuu"
+        _database_name = "fuu"
 
     FooBar.client = client
     assert FooBar.database_name == "fuu"
-    assert FooBar.database == FooBar.client.fuu
 
-
-def test_thingy_collection_name(client):
     class FooBar(Thingy):
-        collection_name = "baz"
+        _database = database
+
+    assert FooBar.database_name == database.name
+
+
+def test_thingy_collection_name(client, collection):
+    class FooBar(Thingy):
+        _collection_name = "baz"
 
     FooBar.client = client
     assert FooBar.collection_name == "baz"
-    assert FooBar.collection == FooBar.client.foo.baz
+
+    class FooBar(Thingy):
+        _collection = collection
+
+    assert FooBar.collection_name == collection.name
 
 
 def test_thingy_database_from_collection(collection):
@@ -247,3 +255,16 @@ def test_create_indexes(database):
     create_indexes()
     assert len(Foo.collection.index_information()) == 2
     assert len(Bar.collection.index_information()) == 3
+
+
+def test_github_issue_6(client):
+    class SynchronisedSwimming(Thingy):
+        pass
+
+    SynchronisedSwimming.client = client
+    assert SynchronisedSwimming.database.name == "synchronised"
+    assert SynchronisedSwimming.collection.name == "swimming"
+
+    SynchronisedSwimming._database_name = "sport"
+    assert SynchronisedSwimming.database.name == "sport"
+    assert SynchronisedSwimming.collection.name == "synchronised_swimming"

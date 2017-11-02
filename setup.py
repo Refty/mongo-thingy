@@ -21,7 +21,7 @@ setup(
     zip_safe=False,
     platforms="any",
     install_requires=[
-        "thingy>=0.6.2",
+        "thingy>=0.7.0",
         "pymongo>=3.0"
     ],
     classifiers=[

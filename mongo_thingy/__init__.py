@@ -9,11 +9,16 @@ from mongo_thingy.cursor import Cursor
 class Thingy(DatabaseThingy):
     client = None
     _collection = None
+    _collection_name = None
     _cursor_cls = Cursor
 
     @classproperty
     def _table(cls):
         return cls._collection
+
+    @classproperty
+    def _table_name(cls):
+        return cls._collection_name
 
     @classproperty
     def table_name(cls):
