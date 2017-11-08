@@ -58,6 +58,10 @@ class Thingy(DatabaseThingy):
         return table.name
 
     @classmethod
+    def get_collection(cls):
+        return cls.get_table()
+
+    @classmethod
     def add_index(cls, keys, **kwargs):
         kwargs.setdefault("background", True)
         if not hasattr(cls, "_indexes"):
@@ -133,13 +137,13 @@ class Thingy(DatabaseThingy):
     def save(self):
         data = self.__dict__
         if self.id:
-            self.collection.update({"_id": self.id}, data, upsert=True)
+            self.get_collection().update({"_id": self.id}, data, upsert=True)
         else:
-            self.collection.insert(data)
+            self.get_collection().insert(data)
         return self
 
     def delete(self):
-        return self.collection.remove({"_id": self.id})
+        return self.get_collection().remove({"_id": self.id})
 
 
 connect = Thingy.connect
