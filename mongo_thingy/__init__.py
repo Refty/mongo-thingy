@@ -27,7 +27,7 @@ class Thingy(DatabaseThingy):
 
     @classproperty
     def collection(cls):
-        return cls.get_table()
+        return cls.get_collection()
 
     @classproperty
     def collection_name(cls):
