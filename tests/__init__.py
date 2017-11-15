@@ -95,7 +95,8 @@ def test_thingy_add_index(collection):
 
 def test_thingy_count(TestThingy, collection):
     collection.insert({"bar": "baz"})
-    assert TestThingy.count() == 1
+    collection.insert({"foo": "bar"})
+    assert TestThingy.count({"foo": "bar"}) == 1
 
     collection.remove()
     assert TestThingy.count() == 0

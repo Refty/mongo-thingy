@@ -70,7 +70,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def count(cls, *args, **kwargs):
-        return cls.collection.count()
+        return cls.collection.count(*args, **kwargs)
 
     @classmethod
     def connect(cls, *args, **kwargs):
