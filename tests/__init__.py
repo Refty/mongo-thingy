@@ -1,6 +1,6 @@
 import pytest
 from bson import ObjectId
-from pymongo import MongoClient
+from pymongo import errors, MongoClient
 
 from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
 
@@ -231,6 +231,18 @@ def test_thingy_save(TestThingy, collection):
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "qux"
     assert thingy._id == "bar"
+
+
+def test_thingy_create(TestThingy, collection):
+    thingy = TestThingy(bar="baz")
+    assert TestThingy.count() == 0
+    thingy.create()
+    assert TestThingy.count() == 1
+    assert isinstance(thingy._id, ObjectId)
+
+    with pytest.raises(errors.DuplicateKeyError):
+        thingy = TestThingy(_id=thingy._id, bar="qux").create()
+    assert TestThingy.count() == 1
 
 
 def test_thingy_delete(TestThingy, collection):
