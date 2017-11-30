@@ -134,6 +134,10 @@ class Thingy(DatabaseThingy):
         else:
             self._id = value
 
+    def create(self):
+        self.get_collection().insert(self.__dict__)
+        return self
+
     def save(self):
         data = self.__dict__
         if self.id:
