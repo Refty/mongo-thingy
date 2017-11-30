@@ -134,13 +134,9 @@ class Thingy(DatabaseThingy):
         else:
             self._id = value
 
-    def create(self):
-        self.get_collection().insert(self.__dict__)
-        return self
-
-    def save(self):
+    def save(self, force_insert=False):
         data = self.__dict__
-        if self.id:
+        if self.id and not force_insert:
             self.get_collection().update({"_id": self.id}, data, upsert=True)
         else:
             self.get_collection().insert(data)

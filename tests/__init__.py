@@ -234,15 +234,12 @@ def test_thingy_save(TestThingy, collection):
     assert thingy._id == "bar"
 
 
-def test_thingy_create(TestThingy, collection):
-    thingy = TestThingy(bar="baz")
-    assert TestThingy.count() == 0
-    thingy.create()
-    assert TestThingy.count() == 1
-    assert isinstance(thingy._id, ObjectId)
+def test_thingy_save_force_insert(TestThingy, collection):
+    thingy = TestThingy().save(force_insert=True)
 
     with pytest.raises(DuplicateKeyError):
-        thingy = TestThingy(_id=thingy._id, bar="qux").create()
+        TestThingy(_id=thingy._id, bar="qux").save(force_insert=True)
+
     assert TestThingy.count() == 1
 
 
