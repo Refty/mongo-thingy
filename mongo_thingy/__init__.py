@@ -93,6 +93,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def disconnect(cls, *args, **kwargs):
+        cls.client.close()
         cls._client = None
         cls._database = None
 
