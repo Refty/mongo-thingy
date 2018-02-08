@@ -75,8 +75,8 @@ class Versioned(object):
         self.__dict__ = previous_version
         return self.save()
 
-    def save(self, author=None):
-        result = super(Versioned, self).save()
+    def save(self, author=None, **kwargs):
+        result = super(Versioned, self).save(**kwargs)
         version = self._revision_cls.from_thingy(self, author=author)
         version.save()
         return result

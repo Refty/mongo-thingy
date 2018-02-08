@@ -243,6 +243,15 @@ def test_thingy_save_force_insert(TestThingy, collection):
     assert TestThingy.count() == 1
 
 
+def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
+    thingy = TestVersionedThingy().save(force_insert=True)
+
+    with pytest.raises(DuplicateKeyError):
+        TestVersionedThingy(_id=thingy._id, bar="qux").save(force_insert=True)
+
+    assert TestVersionedThingy.count() == 1
+
+
 def test_thingy_delete(TestThingy, collection):
     thingy = TestThingy(bar="baz").save()
     assert TestThingy.count() == 1
