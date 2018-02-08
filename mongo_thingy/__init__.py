@@ -137,7 +137,7 @@ class Thingy(DatabaseThingy):
 
     def save(self, force_insert=False):
         data = self.__dict__
-        if self.id and not force_insert:
+        if self.id is not None and not force_insert:
             self.get_collection().update({"_id": self.id}, data, upsert=True)
         else:
             self.get_collection().insert(data)
