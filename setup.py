@@ -8,7 +8,7 @@ def get_description():
 
 setup(
     name="Mongo-Thingy",
-    version="0.10.1",
+    version="0.10.2",
     url="https://github.com/numberly/mongo-thingy",
     license="MIT",
     author="Guillaume Gelin",
