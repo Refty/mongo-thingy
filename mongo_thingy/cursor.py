@@ -3,19 +3,21 @@ from pymongo.cursor import Cursor as MongoCursor
 
 class Cursor(MongoCursor):
 
-    def __init__(self, thingy_cls, collection, filter=None, view=None,
-                 *args, **kwargs):
-        self.thingy_cls = thingy_cls
+    def __init__(self, *args, **kwargs):
+        self.thingy_cls = kwargs.pop("thingy_cls", None)
+        view = kwargs.pop("view", None)
         if view is not None:
             view = self.get_view(view)
         self.thingy_view = view
-        super(Cursor, self).__init__(collection, filter or {}, *args, **kwargs)
+        super(Cursor, self).__init__(*args, **kwargs)
 
     def __getitem__(self, index):
         document = super(Cursor, self).__getitem__(index)
         return self.bind(document)
 
     def bind(self, document):
+        if not self.thingy_cls:
+            return document
         thingy = self.thingy_cls(document)
         if self.thingy_view is not None:
             return self.thingy_view(thingy)

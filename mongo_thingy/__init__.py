@@ -103,7 +103,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def find(cls, *args, **kwargs):
-        return cls._cursor_cls(cls, cls.collection, *args, **kwargs)
+        return cls._cursor_cls(cls.collection, thingy_cls=cls, *args, **kwargs)
 
     @classmethod
     def find_one(cls, filter=None, *args, **kwargs):
