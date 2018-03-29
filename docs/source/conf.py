@@ -18,6 +18,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
 ]
 
 # The master toctree document.
