@@ -2,6 +2,7 @@ from pymongo.cursor import Cursor as MongoCursor
 
 
 class Cursor(MongoCursor):
+    """Custom cursor to profit from the power of Thingy"""
 
     def __init__(self, *args, **kwargs):
         self.thingy_cls = kwargs.pop("thingy_cls", None)

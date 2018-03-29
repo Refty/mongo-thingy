@@ -8,6 +8,7 @@ from mongo_thingy.cursor import Cursor
 
 
 class Thingy(DatabaseThingy):
+    """Represents a document in a collection"""
     _client = None
     _collection = None
     _collection_name = None
@@ -152,6 +153,7 @@ disconnect = Thingy.disconnect
 
 
 def create_indexes():
+    """Create indexes registered on all :class:`Thingy`"""
     for cls in registry:
         if issubclass(cls, Thingy):
             cls.create_indexes()

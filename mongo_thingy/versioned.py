@@ -19,6 +19,7 @@ class RevisionCursor(Cursor):
 
 
 class Revision(Thingy):
+    """Revision of a document"""
     _cursor_cls = RevisionCursor
 
     @classmethod
@@ -45,6 +46,7 @@ Revision.add_index([("document_id", DESCENDING),
 
 
 class Versioned(object):
+    """Mixin to versionate changes in a collection"""
     _revision_cls = Revision
 
     def get_revisions(self, **kwargs):
