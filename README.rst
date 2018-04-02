@@ -13,6 +13,8 @@ Mongo-Thingy
    :target: https://travis-ci.org/numberly/mongo-thingy
 .. image:: https://img.shields.io/coveralls/numberly/mongo-thingy.svg
    :target: https://coveralls.io/github/numberly/mongo-thingy
+.. image:: https://readthedocs.org/projects/mongo-thingy/badge
+   :target: http://mongo-thingy.readthedocs.io
 
 |
 
@@ -29,6 +31,8 @@ Mongo-Thingy has:
 - Thingy_ views - control what to show, and create fields based on other fields;
 - versioning (optional) - rollback to any point in any thingy history;
 - and more!
+
+Documentation: http://mongo-thingy.readthedocs.io
 
 
 Compatibility
