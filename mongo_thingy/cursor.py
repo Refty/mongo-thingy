@@ -24,6 +24,12 @@ class Cursor(MongoCursor):
             return self.thingy_view(thingy)
         return thingy
 
+    def first(self):
+        try:
+            return self.limit(-1).next()
+        except StopIteration:
+            pass
+
     def get_view(self, name):
         return self.thingy_cls._views[name]
 

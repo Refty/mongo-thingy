@@ -1,3 +1,6 @@
+import pytest
+from pymongo.errors import InvalidOperation
+
 from mongo_thingy import Thingy
 from mongo_thingy.cursor import Cursor
 
@@ -15,6 +18,32 @@ def test_cursor_bind(collection):
     result = cursor.bind({"foo": "bar"})
     assert isinstance(result, Foo)
     assert result.foo == "bar"
+
+
+def test_cursor_first(collection):
+    collection.insert_many([{"bar": "baz"},
+                            {"bar": "qux"}])
+
+    cursor = Cursor(collection)
+
+    result = cursor.first()
+    assert isinstance(result, dict)
+    assert result["bar"] == "baz"
+
+    with pytest.raises(InvalidOperation):
+        cursor.first()
+
+    class Foo(Thingy):
+        _collection = collection
+
+    cursor = Cursor(collection, thingy_cls=Foo)
+
+    result = cursor.first()
+    assert isinstance(result, Foo)
+    assert result.bar == "baz"
+
+    with pytest.raises(InvalidOperation):
+        cursor.first()
 
 
 def test_cursor_getitem(collection):

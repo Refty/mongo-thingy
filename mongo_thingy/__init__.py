@@ -113,10 +113,7 @@ class Thingy(DatabaseThingy):
 
         max_time_ms = kwargs.pop("max_time_ms", None)
         cursor = cls.find(filter, *args, **kwargs).max_time_ms(max_time_ms)
-
-        for result in cursor.limit(-1):
-            return result
-        return None
+        return cursor.first()
 
     @classmethod
     def find_one_and_replace(cls, *args, **kwargs):
