@@ -36,15 +36,19 @@ class Thingy(DatabaseThingy):
 
     @classproperty
     def client(cls):
-        return cls._client
+        return cls.get_client()
+
+    @classmethod
+    def _get_client(cls, database):
+        return database.client
 
     @classmethod
     def _get_database(cls, collection, name):
         if collection:
             return collection.database
-        if cls.client and name:
-            return cls.client[name]
-        raise AttributeError("Undefined client.")
+        if cls._client and name:
+            return cls._client[name]
+        raise AttributeError("Undefined database.")
 
     @classmethod
     def _get_table(cls, database, table_name):
@@ -57,6 +61,12 @@ class Thingy(DatabaseThingy):
     @classmethod
     def _get_table_name(cls, table):
         return table.name
+
+    @classmethod
+    def get_client(cls):
+        if cls._client:
+            return cls._client
+        return cls._get_client(cls.database)
 
     @classmethod
     def get_collection(cls):
