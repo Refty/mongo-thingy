@@ -13,8 +13,8 @@ setup(
     license="MIT",
     author="Guillaume Gelin",
     author_email="ramnes@1000mercis.com",
-    description=("The most Pythonic and friendly-yet-powerful way to use "
-                 "MongoDB"),
+    description=("The most idiomatic and friendly-yet-powerful way to use "
+                 "MongoDB with Python"),
     long_description=get_description(),
     packages=["mongo_thingy"],
     include_package_data=True,

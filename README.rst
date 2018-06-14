@@ -18,7 +18,8 @@ Mongo-Thingy
 
 |
 
-Mongo-Thingy is the most Pythonic and friendly-yet-powerful way to use MongoDB.
+Mongo-Thingy is the most idiomatic and friendly-yet-powerful way to use
+MongoDB with Python.
 
 It is an "Object-Document Mapper" that gives you full advantage of MongoDB
 schema-less design by **not** asking you to define schemas in your code, but
