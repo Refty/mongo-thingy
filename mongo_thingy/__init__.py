@@ -87,7 +87,7 @@ class Thingy(DatabaseThingy):
     def connect(cls, *args, **kwargs):
         cls._client = MongoClient(*args, **kwargs)
         try:
-            cls._database = cls._client.get_default_database()
+            cls._database = cls._client.get_database()
         except ConfigurationError:
             pass
 
