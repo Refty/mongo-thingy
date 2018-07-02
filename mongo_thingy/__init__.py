@@ -121,8 +121,7 @@ class Thingy(DatabaseThingy):
         if filter is not None and not isinstance(filter, collections.Mapping):
             filter = {"_id": filter}
 
-        max_time_ms = kwargs.pop("max_time_ms", None)
-        cursor = cls.find(filter, *args, **kwargs).max_time_ms(max_time_ms)
+        cursor = cls.find(filter, *args, **kwargs)
         return cursor.first()
 
     @classmethod
