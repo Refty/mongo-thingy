@@ -80,8 +80,10 @@ class Thingy(DatabaseThingy):
         cls._indexes.append((keys, kwargs))
 
     @classmethod
-    def count(cls, *args, **kwargs):
-        return cls.collection.count(*args, **kwargs)
+    def count(cls, filter=None, *args, **kwargs):
+        if filter is None:
+            filter = {}
+        return cls.collection.count_documents(filter, *args, **kwargs)
 
     @classmethod
     def connect(cls, *args, **kwargs):

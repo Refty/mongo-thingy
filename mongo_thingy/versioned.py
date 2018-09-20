@@ -61,8 +61,7 @@ class Versioned(object):
 
     @property
     def versioned(self):
-        count = self.get_revisions().limit(1).count(with_limit_and_skip=True)
-        return bool(count)
+        return bool(self.get_revisions().count())
 
     @property
     def revisions(self):
