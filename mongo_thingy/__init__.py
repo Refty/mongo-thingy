@@ -147,13 +147,14 @@ class Thingy(DatabaseThingy):
     def save(self, force_insert=False):
         data = self.__dict__
         if self.id is not None and not force_insert:
-            self.get_collection().update({"_id": self.id}, data, upsert=True)
+            filter = {"_id": self.id}
+            self.get_collection().replace_one(filter, data, upsert=True)
         else:
-            self.get_collection().insert(data)
+            self.get_collection().insert_one(data)
         return self
 
     def delete(self):
-        return self.get_collection().remove({"_id": self.id})
+        return self.get_collection().delete_one({"_id": self.id})
 
 
 connect = Thingy.connect
