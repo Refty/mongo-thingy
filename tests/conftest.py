@@ -14,7 +14,9 @@ def client():
 def database(client):
     database = client.get_default_database()
     yield database
-    client.drop_database(database.name)
+    for collection_name in database.collection_names():
+        collection = database[collection_name]
+        collection.remove({})
 
 
 @pytest.fixture
