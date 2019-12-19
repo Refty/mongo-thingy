@@ -80,14 +80,16 @@ class Thingy(DatabaseThingy):
         cls._indexes.append((keys, kwargs))
 
     @classmethod
-    def count(cls, *args, **kwargs):
-        return cls.collection.count(*args, **kwargs)
+    def count(cls, filter=None, *args, **kwargs):
+        if filter is None:
+            filter = {}
+        return cls.collection.count_documents(filter, *args, **kwargs)
 
     @classmethod
     def connect(cls, *args, **kwargs):
         cls._client = MongoClient(*args, **kwargs)
         try:
-            cls._database = cls._client.get_default_database()
+            cls._database = cls._client.get_database()
         except ConfigurationError:
             pass
 
@@ -121,8 +123,7 @@ class Thingy(DatabaseThingy):
         if filter is not None and not isinstance(filter, collections.Mapping):
             filter = {"_id": filter}
 
-        max_time_ms = kwargs.pop("max_time_ms", None)
-        cursor = cls.find(filter, *args, **kwargs).max_time_ms(max_time_ms)
+        cursor = cls.find(filter, *args, **kwargs)
         return cursor.first()
 
     @classmethod
@@ -146,13 +147,14 @@ class Thingy(DatabaseThingy):
     def save(self, force_insert=False):
         data = self.__dict__
         if self.id is not None and not force_insert:
-            self.get_collection().update({"_id": self.id}, data, upsert=True)
+            filter = {"_id": self.id}
+            self.get_collection().replace_one(filter, data, upsert=True)
         else:
-            self.get_collection().insert(data)
+            self.get_collection().insert_one(data)
         return self
 
     def delete(self):
-        return self.get_collection().remove({"_id": self.id})
+        return self.get_collection().delete_one({"_id": self.id})
 
 
 connect = Thingy.connect

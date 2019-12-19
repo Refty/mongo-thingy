@@ -22,7 +22,7 @@ setup(
     platforms="any",
     install_requires=[
         "thingy>=0.8.3",
-        "pymongo>=3.0"
+        "pymongo>=3.7"
     ],
     classifiers=[
         "Intended Audience :: Developers",

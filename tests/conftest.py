@@ -12,7 +12,7 @@ def client():
 
 @pytest.fixture
 def database(client):
-    database = client.get_default_database()
+    database = client.get_database()
     yield database
     for collection_name in database.collection_names():
         collection = database[collection_name]
