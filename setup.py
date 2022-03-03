@@ -9,10 +9,10 @@ def get_description():
 setup(
     name="Mongo-Thingy",
     version="0.12.0",
-    url="https://github.com/numberly/mongo-thingy",
+    url="https://github.com/Refty/mongo-thingy",
     license="MIT",
     author="Guillaume Gelin",
-    author_email="ramnes@1000mercis.com",
+    author_email="guillaume@refty.co",
     description=("The most idiomatic and friendly-yet-powerful way to use "
                  "MongoDB with Python"),
     long_description=get_description(),

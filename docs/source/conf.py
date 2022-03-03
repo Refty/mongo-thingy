@@ -26,8 +26,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Mongo-Thingy'
-copyright = 'numberly'
-author = 'numberly'
+copyright = 'Refty'
+author = 'Refty'
 
 
 # -- Options for HTML output ----------------------------------------------

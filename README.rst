@@ -1,4 +1,4 @@
-.. _Thingy: https://github.com/numberly/thingy
+.. _Thingy: https://github.com/Refty/thingy
 .. _PyMongo: https://github.com/mongodb/mongo-python-driver
 
 ============
@@ -7,12 +7,12 @@ Mongo-Thingy
 
 .. image:: https://img.shields.io/pypi/v/mongo-thingy.svg
    :target: https://pypi.python.org/pypi/Mongo-Thingy
-.. image:: https://img.shields.io/github/license/numberly/mongo-thingy.svg
-   :target: https://github.com/numberly/mongo-thingy/blob/master/LICENSE
-.. image:: https://img.shields.io/travis/numberly/mongo-thingy.svg
-   :target: https://travis-ci.org/numberly/mongo-thingy
-.. image:: https://img.shields.io/coveralls/numberly/mongo-thingy.svg
-   :target: https://coveralls.io/github/numberly/mongo-thingy
+.. image:: https://img.shields.io/github/license/Refty/mongo-thingy.svg
+   :target: https://github.com/Refty/mongo-thingy/blob/master/LICENSE
+.. image:: https://img.shields.io/travis/Refty/mongo-thingy.svg
+   :target: https://travis-ci.org/Refty/mongo-thingy
+.. image:: https://img.shields.io/coveralls/Refty/mongo-thingy.svg
+   :target: https://coveralls.io/github/Refty/mongo-thingy
 .. image:: https://readthedocs.org/projects/mongo-thingy/badge
    :target: http://mongo-thingy.readthedocs.io
 
@@ -254,6 +254,22 @@ To run Mongo-Thingy tests:
 * make sure you have a MongoDB database running on ``localhost:27017``;
 * install developers requirements with ``pip install -r requirements.txt``;
 * run ``pytest``.
+
+
+Sponsors
+========
+
+.. image:: https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/numberly.png
+    :alt: Numberly
+    :align: center
+    :target: https://numberly.com/
+
+|
+
+.. image:: https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/refty.png
+    :alt: Refty
+    :align: center
+    :target: https://refty.co/
 
 
 License
