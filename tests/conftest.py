@@ -14,7 +14,7 @@ def client():
 def database(client):
     database = client.get_database()
     yield database
-    for collection_name in database.collection_names():
+    for collection_name in database.list_collection_names():
         collection = database[collection_name]
         collection.remove({})
 
