@@ -16,7 +16,7 @@ def database(client):
     yield database
     for collection_name in database.list_collection_names():
         collection = database[collection_name]
-        collection.remove({})
+        collection.delete_many({})
 
 
 @pytest.fixture
