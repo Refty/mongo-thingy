@@ -1,5 +1,5 @@
 import warnings
-import collections
+from collections.abc import Mapping
 
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConfigurationError
@@ -127,7 +127,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def find_one(cls, filter=None, *args, **kwargs):
-        if filter is not None and not isinstance(filter, collections.Mapping):
+        if filter is not None and not isinstance(filter, Mapping):
             filter = {"_id": filter}
 
         cursor = cls.find(filter, *args, **kwargs)
