@@ -55,14 +55,18 @@ class Versioned(object):
         filter.update(kwargs)
         return self._revision_cls.find(filter, thingy=self)
 
+    def count_revisions(self, **kwargs):
+        filter = {"document_id": self.id,
+                  "document_type": type(self).__name__}
+        return self._revision_cls.count_documents(filter, **kwargs)
+
     @property
     def version(self):
-        return self.get_revisions().count()
+        return self.count_revisions()
 
     @property
     def versioned(self):
-        count = self.get_revisions().limit(1).count(with_limit_and_skip=True)
-        return bool(count)
+        return bool(self.count_revisions(limit=1))
 
     @property
     def revisions(self):

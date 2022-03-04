@@ -73,7 +73,7 @@ Connect, insert and find thingies
    ...     pass
 
    >>> user = User({"name": "Mr. Foo", "age": 42}).save()
-   >>> User.count()
+   >>> User.count_documents()
    1
    >>> User.find_one({"age": 42})
    User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 42})

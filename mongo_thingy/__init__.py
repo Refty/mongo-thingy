@@ -1,3 +1,4 @@
+import warnings
 import collections
 
 from pymongo import MongoClient, ReturnDocument
@@ -80,10 +81,16 @@ class Thingy(DatabaseThingy):
         cls._indexes.append((keys, kwargs))
 
     @classmethod
-    def count(cls, filter=None, *args, **kwargs):
+    def count_documents(cls, filter=None, *args, **kwargs):
         if filter is None:
             filter = {}
         return cls.collection.count_documents(filter, *args, **kwargs)
+
+    @classmethod
+    def count(cls, filter=None, *args, **kwargs):
+        warnings.warn("count is deprecated. Use count_documents instead.",
+                      DeprecationWarning)
+        return cls.count_documents(filter=filter, *args, **kwargs)
 
     @classmethod
     def connect(cls, *args, **kwargs):
