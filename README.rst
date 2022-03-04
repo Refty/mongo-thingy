@@ -9,8 +9,8 @@ Mongo-Thingy
    :target: https://pypi.python.org/pypi/Mongo-Thingy
 .. image:: https://img.shields.io/github/license/Refty/mongo-thingy.svg
    :target: https://github.com/Refty/mongo-thingy/blob/master/LICENSE
-.. image:: https://img.shields.io/travis/Refty/mongo-thingy.svg
-   :target: https://travis-ci.org/Refty/mongo-thingy
+.. image:: https://img.shields.io/github/checks-status/Refty/mongo-thingy/master.svg
+   :target: https://github.com/Refty/mongo-thingy/actions
 .. image:: https://img.shields.io/coveralls/Refty/mongo-thingy.svg
    :target: https://coveralls.io/github/Refty/mongo-thingy
 .. image:: https://readthedocs.org/projects/mongo-thingy/badge
