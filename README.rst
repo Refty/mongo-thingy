@@ -251,7 +251,8 @@ Tests
 
 To run Mongo-Thingy tests:
 
-* make sure you have a MongoDB database running on ``localhost:27017``;
+* make sure you have a MongoDB database running on ``localhost:27017`` (you can
+  spawn one with ``docker-compose up -d``);
 * install developers requirements with ``pip install -r requirements.txt``;
 * run ``pytest``.
 
