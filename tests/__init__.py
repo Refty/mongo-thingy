@@ -113,8 +113,8 @@ def test_thingy_add_index(collection):
 
 
 def test_thingy_count_documents(TestThingy, collection):
-    collection.insert({"bar": "baz"})
-    collection.insert({"foo": "bar"})
+    collection.insert_one({"bar": "baz"})
+    collection.insert_one({"foo": "bar"})
 
     with pytest.deprecated_call():
         TestThingy.count()
@@ -179,7 +179,7 @@ def test_thingy_distinct(TestThingy, collection):
                             {"bar": "qux"}])
     assert TestThingy.distinct("bar") == ["baz", "qux"]
 
-    collection.insert({"bar": None})
+    collection.insert_one({"bar": None})
     assert None in TestThingy.distinct("bar")
 
 
