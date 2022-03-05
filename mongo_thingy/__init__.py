@@ -45,7 +45,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def _get_database(cls, collection, name):
-        if collection:
+        if collection is not None:
             return collection.database
         if cls._client and name:
             return cls._client[name]

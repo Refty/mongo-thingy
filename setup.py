@@ -21,8 +21,8 @@ setup(
     zip_safe=False,
     platforms="any",
     install_requires=[
-        "thingy>=0.8.3",
-        "pymongo>=3.7"
+        "thingy>=0.8.5",
+        "pymongo>=4"
     ],
     classifiers=[
         "Intended Audience :: Developers",

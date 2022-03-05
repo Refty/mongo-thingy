@@ -138,7 +138,7 @@ def test_thingy_connect_disconnect(connect, disconnect):
 
     connect("mongodb://hostname/database")
     assert isinstance(Thingy.client, MongoClient)
-    assert Thingy.database
+    assert Thingy.database is not None
     assert Thingy.database.name == "database"
     disconnect()
 
