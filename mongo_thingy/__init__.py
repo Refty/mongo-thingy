@@ -1,4 +1,5 @@
-import collections
+import warnings
+from collections.abc import Mapping
 
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConfigurationError
@@ -44,7 +45,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def _get_database(cls, collection, name):
-        if collection:
+        if collection is not None:
             return collection.database
         if cls._client and name:
             return cls._client[name]
@@ -80,10 +81,16 @@ class Thingy(DatabaseThingy):
         cls._indexes.append((keys, kwargs))
 
     @classmethod
-    def count(cls, filter=None, *args, **kwargs):
+    def count_documents(cls, filter=None, *args, **kwargs):
         if filter is None:
             filter = {}
         return cls.collection.count_documents(filter, *args, **kwargs)
+
+    @classmethod
+    def count(cls, filter=None, *args, **kwargs):
+        warnings.warn("count is deprecated. Use count_documents instead.",
+                      DeprecationWarning)
+        return cls.count_documents(filter=filter, *args, **kwargs)
 
     @classmethod
     def connect(cls, *args, **kwargs):
@@ -120,7 +127,7 @@ class Thingy(DatabaseThingy):
 
     @classmethod
     def find_one(cls, filter=None, *args, **kwargs):
-        if filter is not None and not isinstance(filter, collections.Mapping):
+        if filter is not None and not isinstance(filter, Mapping):
             filter = {"_id": filter}
 
         cursor = cls.find(filter, *args, **kwargs)

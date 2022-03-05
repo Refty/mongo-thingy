@@ -112,13 +112,15 @@ def test_thingy_add_index(collection):
     assert Foo._indexes == [("foo", {"unique": True, "background": False})]
 
 
-def test_thingy_count(TestThingy, collection):
-    collection.insert({"bar": "baz"})
-    collection.insert({"foo": "bar"})
-    assert TestThingy.count({"foo": "bar"}) == 1
+def test_thingy_count_documents(TestThingy, collection):
+    collection.insert_one({"bar": "baz"})
+    collection.insert_one({"foo": "bar"})
 
-    collection.remove()
-    assert TestThingy.count() == 0
+    with pytest.deprecated_call():
+        TestThingy.count()
+
+    assert TestThingy.count_documents() == 2
+    assert TestThingy.count_documents({"foo": "bar"}) == 1
 
 
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
@@ -136,7 +138,7 @@ def test_thingy_connect_disconnect(connect, disconnect):
 
     connect("mongodb://hostname/database")
     assert isinstance(Thingy.client, MongoClient)
-    assert Thingy.database
+    assert Thingy.database is not None
     assert Thingy.database.name == "database"
     disconnect()
 
@@ -177,7 +179,7 @@ def test_thingy_distinct(TestThingy, collection):
                             {"bar": "qux"}])
     assert TestThingy.distinct("bar") == ["baz", "qux"]
 
-    collection.insert({"bar": None})
+    collection.insert_one({"bar": None})
     assert None in TestThingy.distinct("bar")
 
 
@@ -185,7 +187,7 @@ def test_thingy_find(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
     cursor = TestThingy.find()
-    assert cursor.count() == 2
+    assert len(list(cursor.clone())) == 2
 
     thingy = cursor.next()
     assert isinstance(thingy, TestThingy)
@@ -245,9 +247,9 @@ def test_thingy_id(collection):
 
 def test_thingy_save(TestThingy, collection):
     thingy = TestThingy(bar="baz")
-    assert TestThingy.count() == 0
+    assert TestThingy.count_documents() == 0
     thingy.save()
-    assert TestThingy.count() == 1
+    assert TestThingy.count_documents() == 1
     assert isinstance(thingy._id, ObjectId)
 
     thingy = TestThingy(id="bar", bar="qux").save()
@@ -262,7 +264,7 @@ def test_thingy_save_force_insert(TestThingy, collection):
     with pytest.raises(DuplicateKeyError):
         TestThingy(_id=thingy._id, bar="qux").save(force_insert=True)
 
-    assert TestThingy.count() == 1
+    assert TestThingy.count_documents() == 1
 
 
 def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
@@ -271,14 +273,14 @@ def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
     with pytest.raises(DuplicateKeyError):
         TestVersionedThingy(_id=thingy._id, bar="qux").save(force_insert=True)
 
-    assert TestVersionedThingy.count() == 1
+    assert TestVersionedThingy.count_documents() == 1
 
 
 def test_thingy_delete(TestThingy, collection):
     thingy = TestThingy(bar="baz").save()
-    assert TestThingy.count() == 1
+    assert TestThingy.count_documents() == 1
     thingy.delete()
-    assert TestThingy.count() == 0
+    assert TestThingy.count_documents() == 0
 
 
 def test_create_indexes(database):

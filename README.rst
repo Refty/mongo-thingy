@@ -43,8 +43,8 @@ Mongo-Thingy is pure-Python.
 
 It supports all Python and MongoDB versions supported by PyMongo_, namely:
 
-- CPython 2.7, 3.4+, PyPy, and PyPy3
-- MongoDB 2.6, 3.0, 3.2, 3.4, 3.6, 4.0, and 4.2
+- CPython 3.6+ and PyPy3.6+
+- MongoDB 3.6, 4.0, 4.2, 4.4, and 5.0.
 
 
 Install
@@ -73,7 +73,7 @@ Connect, insert and find thingies
    ...     pass
 
    >>> user = User({"name": "Mr. Foo", "age": 42}).save()
-   >>> User.count()
+   >>> User.count_documents()
    1
    >>> User.find_one({"age": 42})
    User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 42})
