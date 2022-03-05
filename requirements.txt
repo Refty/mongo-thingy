@@ -2,4 +2,4 @@ thingy==0.8.5
 pymongo==4.0.2
 pytest==7.0.1
 pytest-cov==3.0.0
-sphinx==1.7.2
+sphinx==4.4.0
