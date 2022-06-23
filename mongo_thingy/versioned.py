@@ -53,7 +53,7 @@ class Versioned(object):
         filter = {"document_id": self.id,
                   "document_type": type(self).__name__}
         filter.update(kwargs)
-        return self._revision_cls.find(filter, thingy=self)
+        return self._revision_cls.find(filter, thingy=self).sort("_id", ASCENDING)
 
     def count_revisions(self, **kwargs):
         filter = {"document_id": self.id,
@@ -70,7 +70,7 @@ class Versioned(object):
 
     @property
     def revisions(self):
-        return self.get_revisions().sort("_id", ASCENDING)
+        return self.get_revisions()
 
     def revert(self):
         version = self.version
