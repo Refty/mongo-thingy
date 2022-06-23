@@ -2,7 +2,65 @@ import pytest
 from pymongo.errors import InvalidOperation
 
 from mongo_thingy import Thingy
-from mongo_thingy.cursor import Cursor
+from mongo_thingy.cursor import _Proxy, _BindingProxy, _ChainingProxy, Cursor
+
+
+def test_proxy():
+    class Delegate:
+        def __init__(self, value):
+            self.value = value
+
+        def foo(self, value=1):
+            self.value += value
+            return self.value
+
+    class FooCursor(Cursor):
+        foo = _Proxy("foo")
+
+    delegate = Delegate(10)
+    cursor = FooCursor(delegate)
+
+    assert cursor.foo() == 11
+    assert cursor.foo(4) == 15
+    assert cursor.delegate.value == 15
+
+
+def test_chaining_proxy():
+    class Delegate:
+        def __init__(self, value):
+            self.value = value
+
+        def foo(self, value=1):
+            self.value += value
+            return self.value
+
+    class FooCursor(Cursor):
+        foo = _ChainingProxy("foo")
+
+    delegate = Delegate(10)
+    cursor = FooCursor(delegate)
+
+    assert cursor.foo().foo(4) is cursor
+    assert cursor.delegate.value == 15
+
+
+def test_binding_proxy():
+    class Delegate:
+        def __init__(self):
+            self.document = {}
+
+        def foo(self, key, value):
+            self.document[key] = value
+            return self.document
+
+    class FooCursor(Cursor):
+        foo = _BindingProxy("foo")
+
+    cursor = FooCursor(Delegate(), thingy_cls=Thingy)
+    foo = cursor.foo("bar", "baz")
+
+    assert isinstance(foo, Thingy)
+    assert foo.bar == "baz"
 
 
 def test_cursor_bind():
