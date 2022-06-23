@@ -21,6 +21,11 @@ class Cursor:
             return self.thingy_view(thingy)
         return thingy
 
+    def clone(self):
+        delegate = self.delegate.clone()
+        return self.__class__(delegate, thingy_cls=self.thingy_cls,
+                              view=self.thingy_view)
+
     def first(self):
         try:
             document = self.delegate.limit(-1).next()

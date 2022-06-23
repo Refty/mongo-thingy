@@ -74,6 +74,22 @@ def test_cursor_getitem(collection):
     assert result.bar == "qux"
 
 
+def test_cursor_clone(collection):
+    collection.insert_many([{"bar": "baz"},
+                            {"bar": "qux"}])
+
+    cursor = Cursor(collection.find())
+
+    clone = cursor.clone()
+    assert clone is not cursor
+    assert clone.delegate is not cursor.delegate
+
+    cursor.skip(1)
+    assert cursor[0]["bar"] == "qux"
+    assert clone[0]["bar"] == "baz"
+    assert cursor.clone()[0]["bar"] == "qux"
+
+
 def test_cursor_next(collection):
     class Foo(Thingy):
         _collection = collection
