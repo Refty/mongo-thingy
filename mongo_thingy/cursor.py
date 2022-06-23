@@ -1,19 +1,16 @@
-from pymongo.cursor import Cursor as MongoCursor
+class Cursor:
 
+    def __init__(self, delegate, thingy_cls=None, view=None):
+        self.delegate = delegate
+        self.thingy_cls = thingy_cls
 
-class Cursor(MongoCursor):
-    """Custom cursor to profit from the power of Thingy"""
-
-    def __init__(self, *args, **kwargs):
-        self.thingy_cls = kwargs.pop("thingy_cls", None)
-        view = kwargs.pop("view", None)
-        if view is not None:
+        if isinstance(view, str):
             view = self.get_view(view)
+
         self.thingy_view = view
-        super(Cursor, self).__init__(*args, **kwargs)
 
     def __getitem__(self, index):
-        document = super(Cursor, self).__getitem__(index)
+        document = self.delegate.__getitem__(index)
         return self.bind(document)
 
     def bind(self, document):
@@ -26,15 +23,16 @@ class Cursor(MongoCursor):
 
     def first(self):
         try:
-            return self.limit(-1).next()
+            document = self.delegate.limit(-1).next()
         except StopIteration:
-            pass
+            return None
+        return self.bind(document)
 
     def get_view(self, name):
         return self.thingy_cls._views[name]
 
     def next(self):
-        document = super(Cursor, self).__next__()
+        document = self.delegate.__next__()
         return self.bind(document)
 
     def view(self, name="defaults"):

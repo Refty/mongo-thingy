@@ -5,16 +5,16 @@ from mongo_thingy import Thingy
 from mongo_thingy.cursor import Cursor
 
 
-def test_cursor_bind(collection):
-    cursor = Cursor(collection)
+def test_cursor_bind():
+    cursor = Cursor(None)
     result = cursor.bind({"foo": "bar"})
     assert isinstance(result, dict)
     assert result["foo"] == "bar"
 
     class Foo(Thingy):
-        _collection = collection
+        pass
 
-    cursor = Cursor(collection, thingy_cls=Foo)
+    cursor = Cursor(None, thingy_cls=Foo)
     result = cursor.bind({"foo": "bar"})
     assert isinstance(result, Foo)
     assert result.foo == "bar"
@@ -24,7 +24,7 @@ def test_cursor_first(collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
 
-    cursor = Cursor(collection)
+    cursor = Cursor(collection.find())
 
     result = cursor.first()
     assert isinstance(result, dict)
@@ -36,7 +36,7 @@ def test_cursor_first(collection):
     class Foo(Thingy):
         _collection = collection
 
-    cursor = Cursor(collection, thingy_cls=Foo)
+    cursor = Cursor(collection.find(), thingy_cls=Foo)
 
     result = cursor.first()
     assert isinstance(result, Foo)
@@ -50,7 +50,7 @@ def test_cursor_getitem(collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
 
-    cursor = Cursor(collection)
+    cursor = Cursor(collection.find())
 
     result = cursor[0]
     assert isinstance(result, dict)
@@ -63,7 +63,7 @@ def test_cursor_getitem(collection):
     class Foo(Thingy):
         _collection = collection
 
-    cursor = Cursor(collection, thingy_cls=Foo)
+    cursor = Cursor(collection.find(), thingy_cls=Foo)
 
     result = cursor[0]
     assert isinstance(result, Foo)
@@ -80,7 +80,7 @@ def test_cursor_next(collection):
 
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
-    cursor = Cursor(collection, thingy_cls=Foo)
+    cursor = Cursor(collection.find(), thingy_cls=Foo)
 
     result = cursor.next()
     assert isinstance(result, Foo)
@@ -99,10 +99,10 @@ def test_cursor_view(collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
 
-    for dictionnary in Cursor(collection, thingy_cls=Foo, view="empty"):
+    for dictionnary in Cursor(collection.find(), thingy_cls=Foo, view="empty"):
         assert dictionnary == {}
 
-    for dictionnary in Cursor(collection, thingy_cls=Foo).view("empty"):
+    for dictionnary in Cursor(collection.find(), thingy_cls=Foo).view("empty"):
         assert dictionnary == {}
 
     for dictionnary in Foo.find(view="empty"):

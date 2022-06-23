@@ -122,8 +122,9 @@ class Thingy(DatabaseThingy):
         return cls.collection.distinct(*args, **kwargs)
 
     @classmethod
-    def find(cls, *args, **kwargs):
-        return cls._cursor_cls(cls.collection, thingy_cls=cls, *args, **kwargs)
+    def find(cls, *args, view=None, **kwargs):
+        delegate = cls.collection.find(*args, **kwargs)
+        return cls._cursor_cls(delegate, thingy_cls=cls, view=view)
 
     @classmethod
     def find_one(cls, filter=None, *args, **kwargs):

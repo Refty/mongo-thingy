@@ -9,7 +9,6 @@ from mongo_thingy.cursor import Cursor
 class RevisionCursor(Cursor):
 
     def __init__(self, *args, **kwargs):
-        self.thingy = kwargs.pop("thingy", None)
         super(RevisionCursor, self).__init__(*args, **kwargs)
 
     def __getitem__(self, index):
@@ -53,7 +52,10 @@ class Versioned(object):
         filter = {"document_id": self.id,
                   "document_type": type(self).__name__}
         filter.update(kwargs)
-        return self._revision_cls.find(filter, thingy=self).sort("_id", ASCENDING)
+
+        cursor = self._revision_cls.find(filter)
+        cursor.thingy = self
+        return cursor.sort("_id", ASCENDING)
 
     def count_revisions(self, **kwargs):
         filter = {"document_id": self.id,
