@@ -75,7 +75,7 @@ class Cursor:
 
     def first(self):
         try:
-            document = self.delegate.limit(-1).next()
+            document = self.delegate.clone().limit(-1).next()
         except StopIteration:
             return None
         return self.bind(document)

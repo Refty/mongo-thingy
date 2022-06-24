@@ -1,6 +1,3 @@
-import pytest
-from pymongo.errors import InvalidOperation
-
 from mongo_thingy import Thingy
 from mongo_thingy.cursor import _Proxy, _BindingProxy, _ChainingProxy, Cursor
 
@@ -88,20 +85,17 @@ def test_cursor_first(collection):
     assert isinstance(result, dict)
     assert result["bar"] == "baz"
 
-    with pytest.raises(InvalidOperation):
-        cursor.first()
-
     class Foo(Thingy):
         _collection = collection
 
-    cursor = Cursor(collection.find(), thingy_cls=Foo)
+    cursor = Cursor(collection.find(), thingy_cls=Foo).sort("_id", -1)
 
     result = cursor.first()
     assert isinstance(result, Foo)
-    assert result.bar == "baz"
+    assert result.bar == "qux"
 
-    with pytest.raises(InvalidOperation):
-        cursor.first()
+    collection.insert_one({})
+    assert cursor.first() is not result
 
 
 def test_cursor_getitem(collection):

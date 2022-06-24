@@ -21,12 +21,13 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
+    global backends
+
     if "backend" in metafunc.fixturenames:
         option = metafunc.config.getoption("backend")
         if option:
-            metafunc.parametrize("backend", [option])
-        else:
-            metafunc.parametrize("backend", backends)
+            backends = [option]
+        metafunc.parametrize("backend", backends)
 
 
 @pytest.fixture
