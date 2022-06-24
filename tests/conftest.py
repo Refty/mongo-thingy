@@ -1,13 +1,41 @@
+import importlib
+
 import pytest
-from pymongo import MongoClient
 
 from mongo_thingy import Thingy
 from mongo_thingy.versioned import Revision, Versioned
 
+backends = ("pymongo", "mongomock")
+
+for backend in backends:
+    try:
+        module = importlib.import_module(backend)
+    except ImportError:
+        module = None
+    globals()[backend] = module
+
+
+@pytest.fixture(params=backends)
+def backend(request):
+    return request.param
+
 
 @pytest.fixture
-def client():
-    return MongoClient("mongodb://localhost/mongo_thingy_tests")
+def client_cls(backend):
+    try:
+        if backend == "pymongo":
+            client_cls = pymongo.MongoClient
+        if backend == "mongomock":
+            client_cls = mongomock.MongoClient
+    except AttributeError:
+        pytest.skip()
+
+    return client_cls
+
+
+@pytest.fixture
+def client(client_cls):
+    return client_cls("mongodb://localhost/mongo_thingy_tests")
 
 
 @pytest.fixture

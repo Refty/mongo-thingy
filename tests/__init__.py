@@ -174,7 +174,7 @@ def test_thingy_create_indexes(TestThingy, collection):
 def test_thingy_distinct(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
-    assert TestThingy.distinct("bar") == ["baz", "qux"]
+    assert set(TestThingy.distinct("bar")) == {"baz", "qux"}
 
     collection.insert_one({"bar": None})
     assert None in TestThingy.distinct("bar")
