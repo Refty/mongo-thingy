@@ -15,9 +15,18 @@ for backend in backends:
     globals()[backend] = module
 
 
-@pytest.fixture(params=backends)
-def backend(request):
-    return request.param
+def pytest_addoption(parser):
+    help = "Test a single backend. Choices: {}".format(", ".join(backends))
+    parser.addoption("--backend", choices=backends, help=help)
+
+
+def pytest_generate_tests(metafunc):
+    if "backend" in metafunc.fixturenames:
+        option = metafunc.config.getoption("backend")
+        if option:
+            metafunc.parametrize("backend", [option])
+        else:
+            metafunc.parametrize("backend", backends)
 
 
 @pytest.fixture
