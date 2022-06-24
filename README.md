@@ -1,5 +1,6 @@
 [pymongo]: https://github.com/mongodb/mongo-python-driver
 [thingy]: https://github.com/Refty/thingy
+[mongomock]: https://github.com/mongomock/mongomock
 
 ![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light)
 
@@ -28,6 +29,8 @@ What you'll get:
 - [PyMongo][pymongo] query language - no need to learn yet another one;
 - [Thingy][thingy] views - control what to show, and create fields based on
   other fields;
+- swappable backend - wanna speed up tests with [Mongomock][mongomock]? well,
+  you can;
 - versioning *(optional)* - rollback to any point in any thingy history;
 - and more!
 
@@ -38,6 +41,12 @@ namely:
 
 - CPython 3.6+ and PyPy3.6+
 - MongoDB 3.6, 4.0, 4.2, 4.4, and 5.0.
+
+As a backend, Mongo-Thingy supports the following libraries:
+
+- [PyMongo][pymongo]
+- [Mongomock][mongomock]
+- more soon™
 
 # Install
 
@@ -63,6 +72,14 @@ pip install mongo-thingy
 1
 >>> User.find_one({"age": 42})
 User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 42})
+```
+
+To use another backend than [PyMongo][pymongo], just pass its client class with
+``client_cls``:
+
+```python
+>>> import mongomock
+>>> connect(client_cls=mongomock.MongoClient)
 ```
 
 ### Update a thingy
