@@ -1,6 +1,5 @@
 import pytest
 from bson import ObjectId
-from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
 from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
@@ -125,16 +124,22 @@ def test_thingy_count_documents(TestThingy, collection):
 
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
 @pytest.mark.parametrize("disconnect", [disconnect, Thingy.disconnect])
-def test_thingy_connect_disconnect(connect, disconnect):
-    connect()
-    assert isinstance(Thingy.client, MongoClient)
+def test_thingy_connect_disconnect(client_cls, connect, disconnect):
+    connect(client_cls=client_cls)
+    assert isinstance(Thingy.client, client_cls)
     assert Thingy._database.name == "test"
 
     disconnect()
     assert Thingy._client is None
 
+    Thingy._client_cls = client_cls
+    connect()
+    assert isinstance(Thingy.client, client_cls)
+
+    disconnect()
+    assert Thingy._client is None
+
     connect("mongodb://hostname/database")
-    assert isinstance(Thingy.client, MongoClient)
     assert Thingy.database is not None
     assert Thingy.database.name == "database"
     disconnect()

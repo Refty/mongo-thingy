@@ -34,13 +34,13 @@ def pytest_generate_tests(metafunc):
 def client_cls(backend):
     try:
         if backend == "pymongo":
-            client_cls = pymongo.MongoClient
+            Thingy.client_cls = pymongo.MongoClient
         if backend == "mongomock":
-            client_cls = mongomock.MongoClient
+            Thingy.client_cls = mongomock.MongoClient
     except AttributeError:
         pytest.skip()
 
-    return client_cls
+    return Thingy.client_cls
 
 
 @pytest.fixture
