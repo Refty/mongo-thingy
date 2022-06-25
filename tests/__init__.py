@@ -1,6 +1,5 @@
 import pytest
 from bson import ObjectId
-from pymongo.errors import DuplicateKeyError
 
 from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
 
@@ -122,6 +121,7 @@ def test_thingy_count_documents(TestThingy, collection):
     assert TestThingy.count_documents({"foo": "bar"}) == 1
 
 
+@pytest.mark.ignore_backends("montydb")
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
 @pytest.mark.parametrize("disconnect", [disconnect, Thingy.disconnect])
 def test_thingy_connect_disconnect(client_cls, connect, disconnect):
@@ -153,6 +153,7 @@ def test_thingy_connect_disconnect(client_cls, connect, disconnect):
         Thingy.database
 
 
+@pytest.mark.ignore_backends("montydb")
 def test_thingy_create_index(TestThingy, collection):
     TestThingy.create_index("foo", unique=True)
     assert TestThingy._indexes == [
@@ -165,6 +166,7 @@ def test_thingy_create_index(TestThingy, collection):
     assert len(indexes) == 2
 
 
+@pytest.mark.ignore_backends("montydb")
 def test_thingy_create_indexes(TestThingy, collection):
     class Foo(TestThingy):
         _indexes = [("foo", {"unique": True, "background": True})]
@@ -219,6 +221,7 @@ def test_thingy_find_one(TestThingy, collection):
     assert thingy is None
 
 
+@pytest.mark.ignore_backends("montydb")
 def test_thingy_find_one_and_replace(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
@@ -263,7 +266,7 @@ def test_thingy_save(TestThingy, collection):
 def test_thingy_save_force_insert(TestThingy, collection):
     thingy = TestThingy().save(force_insert=True)
 
-    with pytest.raises(DuplicateKeyError):
+    with pytest.raises(Exception, match="[dD]uplicate [kK]ey [eE]rror"):
         TestThingy(_id=thingy._id, bar="qux").save(force_insert=True)
 
     assert TestThingy.count_documents() == 1
@@ -272,7 +275,7 @@ def test_thingy_save_force_insert(TestThingy, collection):
 def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
     thingy = TestVersionedThingy().save(force_insert=True)
 
-    with pytest.raises(DuplicateKeyError):
+    with pytest.raises(Exception, match="[dD]uplicate [kK]ey [eE]rror"):
         TestVersionedThingy(_id=thingy._id, bar="qux").save(force_insert=True)
 
     assert TestVersionedThingy.count_documents() == 1
@@ -285,6 +288,7 @@ def test_thingy_delete(TestThingy, collection):
     assert TestThingy.count_documents() == 0
 
 
+@pytest.mark.ignore_backends("montydb")
 def test_create_indexes(database):
     del registry[:]
 

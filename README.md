@@ -1,6 +1,7 @@
 [pymongo]: https://github.com/mongodb/mongo-python-driver
 [thingy]: https://github.com/Refty/thingy
 [mongomock]: https://github.com/mongomock/mongomock
+[montydb]: https://github.com/davidlatwe/montydb
 
 ![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light)
 
@@ -29,8 +30,7 @@ What you'll get:
 - [PyMongo][pymongo] query language - no need to learn yet another one;
 - [Thingy][thingy] views - control what to show, and create fields based on
   other fields;
-- swappable backend - wanna speed up tests with [Mongomock][mongomock]? well,
-  you can;
+- swappable backend - wanna use SQLite behind the scenes? well, you can;
 - versioning *(optional)* - rollback to any point in any thingy history;
 - and more!
 
@@ -46,6 +46,7 @@ As a backend, Mongo-Thingy supports the following libraries:
 
 - [PyMongo][pymongo]
 - [Mongomock][mongomock]
+- [MontyDB][montydb]
 - more soon™
 
 # Install

@@ -5,7 +5,7 @@ import pytest
 from mongo_thingy import Thingy
 from mongo_thingy.versioned import Revision, Versioned
 
-backends = ("pymongo", "mongomock")
+backends = ("pymongo", "mongomock", "montydb")
 
 for backend in backends:
     try:
@@ -42,6 +42,8 @@ def client_cls(backend):
             Thingy.client_cls = pymongo.MongoClient
         if backend == "mongomock":
             Thingy.client_cls = mongomock.MongoClient
+        if backend == "montydb":
+            Thingy.client_cls = montydb.MontyClient
     except AttributeError:
         pytest.skip()
 
@@ -49,13 +51,15 @@ def client_cls(backend):
 
 
 @pytest.fixture
-def client(client_cls):
-    return client_cls("mongodb://localhost/mongo_thingy_tests")
+def client(backend, client_cls):
+    if backend == "montydb":
+        return client_cls(":memory:")
+    return client_cls("mongodb://localhost")
 
 
 @pytest.fixture
 def database(client):
-    return client.get_database()
+    return client.mongo_thingy_tests
 
 
 @pytest.fixture

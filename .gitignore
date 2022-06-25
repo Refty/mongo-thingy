@@ -56,3 +56,7 @@ Session.vim
 # virtualenv
 .venv*
 src/
+
+# MontyDB
+.monty.storage
+monty.storage.cfg

@@ -101,7 +101,7 @@ class Thingy(DatabaseThingy):
         cls._client = client_cls(*args, **kwargs)
         try:
             cls._database = cls._client.get_database()
-        except ConfigurationError:
+        except (ConfigurationError, TypeError):
             cls._database = cls._client["test"]
 
     @classmethod
