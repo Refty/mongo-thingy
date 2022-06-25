@@ -126,12 +126,9 @@ def test_thingy_count_documents(TestThingy, collection):
 @pytest.mark.parametrize("connect", [connect, Thingy.connect])
 @pytest.mark.parametrize("disconnect", [disconnect, Thingy.disconnect])
 def test_thingy_connect_disconnect(connect, disconnect):
-    with pytest.raises(AttributeError):
-        Thingy.client
-
     connect()
     assert isinstance(Thingy.client, MongoClient)
-    assert Thingy._database is None
+    assert Thingy._database.name == "test"
 
     disconnect()
     assert Thingy._client is None

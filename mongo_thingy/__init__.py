@@ -98,7 +98,7 @@ class Thingy(DatabaseThingy):
         try:
             cls._database = cls._client.get_database()
         except ConfigurationError:
-            pass
+            cls._database = cls._client["test"]
 
     @classmethod
     def create_index(cls, keys, **kwargs):
