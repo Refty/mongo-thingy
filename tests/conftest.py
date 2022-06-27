@@ -12,16 +12,14 @@ def client():
 
 @pytest.fixture
 def database(client):
-    database = client.get_database()
-    yield database
-    for collection_name in database.list_collection_names():
-        collection = database[collection_name]
-        collection.delete_many({})
+    return client.get_database()
 
 
 @pytest.fixture
 def collection(request, database):
-    return database[request.node.name]
+    collection = database[request.node.name]
+    collection.delete_many({})
+    return collection
 
 
 @pytest.fixture
@@ -37,6 +35,7 @@ def TestRevision(database):
     class TestRevision(Revision):
         _database = database
 
+    TestRevision.collection.delete_many({})
     return TestRevision
 
 
