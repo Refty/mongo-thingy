@@ -33,13 +33,24 @@ class _BindingProxy(_Proxy):
         return wrapper
 
 
-class Cursor:
+class _AsyncBindingProxy(_Proxy):
+    def __call__(self, cursor):
+        method = getattr(cursor.delegate, self.name)
+
+        @functools.wraps(method)
+        async def wrapper(*args, **kwargs):
+            result = await method(*args, **kwargs)
+            return cursor.bind(result)
+
+        return wrapper
+
+
+class BaseCursor:
     distinct = _Proxy("distinct")
     explain = _Proxy("explain")
     limit = _ChainingProxy("limit")
     skip = _ChainingProxy("skip")
     sort = _ChainingProxy("sort")
-    next = _BindingProxy("next")
 
     def __init__(self, delegate, thingy_cls=None, view=None):
         self.delegate = delegate
@@ -56,10 +67,6 @@ class Cursor:
             return attribute(self)
         return attribute
 
-    def __getitem__(self, index):
-        document = self.delegate.__getitem__(index)
-        return self.bind(document)
-
     def bind(self, document):
         if not self.thingy_cls:
             return document
@@ -70,15 +77,7 @@ class Cursor:
 
     def clone(self):
         delegate = self.delegate.clone()
-        return self.__class__(delegate, thingy_cls=self.thingy_cls,
-                              view=self.thingy_view)
-
-    def first(self):
-        try:
-            document = self.delegate.clone().limit(-1).next()
-        except StopIteration:
-            return None
-        return self.bind(document)
+        return self.__class__(delegate, thingy_cls=self.thingy_cls, view=self.thingy_view)
 
     def get_view(self, name):
         return self.thingy_cls._views[name]
@@ -87,7 +86,36 @@ class Cursor:
         self.thingy_view = self.get_view(name)
         return self
 
-    __next__ = next
+
+class Cursor(BaseCursor):
+    next = __next__ = _BindingProxy("__next__")
+
+    def __getitem__(self, index):
+        document = self.delegate.__getitem__(index)
+        return self.bind(document)
+
+    def first(self):
+        try:
+            document = self.delegate.clone().limit(-1).next()
+        except StopIteration:
+            return None
+        return self.bind(document)
 
 
-__all__ = ["Cursor"]
+class AsyncCursor(BaseCursor):
+    to_list = _Proxy("to_list")
+    next = __anext__ = _AsyncBindingProxy("__anext__")
+
+    async def __aiter__(self):
+        async for document in self.delegate:
+            yield self.bind(document)
+
+    async def first(self):
+        try:
+            document = await self.delegate.clone().limit(-1).next()
+        except StopAsyncIteration:
+            return None
+        return self.bind(document)
+
+
+__all__ = ["AsyncCursor", "Cursor"]

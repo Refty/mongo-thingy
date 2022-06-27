@@ -1,5 +1,6 @@
 from mongo_thingy import Thingy
-from mongo_thingy.cursor import _Proxy, _BindingProxy, _ChainingProxy, Cursor
+from mongo_thingy.cursor import (_Proxy, _BindingProxy, _ChainingProxy,
+                                 AsyncCursor, Cursor,)
 
 
 def test_proxy():
@@ -75,7 +76,7 @@ def test_cursor_bind():
     assert result.foo == "bar"
 
 
-def test_cursor_first(collection):
+def test_cursor_first(thingy_cls, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
 
@@ -85,7 +86,7 @@ def test_cursor_first(collection):
     assert isinstance(result, dict)
     assert result["bar"] == "baz"
 
-    class Foo(Thingy):
+    class Foo(thingy_cls):
         _collection = collection
 
     cursor = Cursor(collection.find(), thingy_cls=Foo).sort("_id", -1)
@@ -96,6 +97,35 @@ def test_cursor_first(collection):
 
     collection.insert_one({})
     assert cursor.first() is not result
+
+    cursor = Cursor(collection.find({"impossible": True}))
+    assert cursor.first() is None
+
+
+async def test_async_cursor_first(thingy_cls, collection):
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+
+    cursor = AsyncCursor(collection.find())
+
+    result = await cursor.first()
+    assert isinstance(result, dict)
+    assert result["bar"] == "baz"
+
+    class Foo(thingy_cls):
+        _collection = collection
+
+    cursor = AsyncCursor(collection.find(), thingy_cls=Foo).sort("_id", -1)
+
+    result = await cursor.first()
+    assert isinstance(result, Foo)
+    assert result.bar == "qux"
+
+    await collection.insert_one({})
+    assert await cursor.first() is not result
+
+    cursor = AsyncCursor(collection.find({"impossible": True}))
+    assert await cursor.first() is None
 
 
 def test_cursor_getitem(collection):
@@ -137,13 +167,29 @@ def test_cursor_clone(collection):
     assert clone.delegate is not cursor.delegate
 
     cursor.skip(1)
-    assert cursor[0]["bar"] == "qux"
-    assert clone[0]["bar"] == "baz"
-    assert cursor.clone()[0]["bar"] == "qux"
+    assert cursor.first()["bar"] == "qux"
+    assert clone.first()["bar"] == "baz"
+    assert cursor.clone().first()["bar"] == "qux"
 
 
-def test_cursor_next(collection):
-    class Foo(Thingy):
+async def test_async_cursor_clone(collection):
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+
+    cursor = AsyncCursor(collection.find())
+
+    clone = cursor.clone()
+    assert clone is not cursor
+    assert clone.delegate is not cursor.delegate
+
+    cursor.skip(1)
+    assert (await cursor.first())["bar"] == "qux"
+    assert (await clone.first())["bar"] == "baz"
+    assert (await cursor.clone().first())["bar"] == "qux"
+
+
+def test_cursor_next(thingy_cls, collection):
+    class Foo(thingy_cls):
         _collection = collection
 
     collection.insert_many([{"bar": "baz"},
@@ -159,8 +205,25 @@ def test_cursor_next(collection):
     assert result.bar == "qux"
 
 
-def test_cursor_view(collection):
-    class Foo(Thingy):
+async def test_async_cursor_next(thingy_cls, collection):
+    class Foo(thingy_cls):
+        _collection = collection
+
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+    cursor = AsyncCursor(collection.find(), thingy_cls=Foo)
+
+    result = await cursor.next()
+    assert isinstance(result, Foo)
+    assert result.bar == "baz"
+
+    result = await cursor.__anext__()
+    assert isinstance(result, Foo)
+    assert result.bar == "qux"
+
+
+def test_cursor_view(thingy_cls, collection):
+    class Foo(thingy_cls):
         _collection = collection
 
     Foo.add_view("empty")
@@ -177,4 +240,25 @@ def test_cursor_view(collection):
         assert dictionnary == {}
 
     for dictionnary in Foo.find().view("empty"):
+        assert dictionnary == {}
+
+
+async def test_async_cursor_view(thingy_cls, collection):
+    class Foo(thingy_cls):
+        _collection = collection
+
+    Foo.add_view("empty")
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+
+    async for dictionnary in AsyncCursor(collection.find(), thingy_cls=Foo, view="empty"):
+        assert dictionnary == {}
+
+    async for dictionnary in AsyncCursor(collection.find(), thingy_cls=Foo).view("empty"):
+        assert dictionnary == {}
+
+    async for dictionnary in Foo.find(view="empty"):
+        assert dictionnary == {}
+
+    async for dictionnary in Foo.find().view("empty"):
         assert dictionnary == {}

@@ -1,3 +1,4 @@
+import asyncio
 import warnings
 from collections.abc import Mapping
 
@@ -5,16 +6,26 @@ from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConfigurationError
 from thingy import classproperty, DatabaseThingy, registry
 
-from mongo_thingy.cursor import Cursor
+from mongo_thingy.cursor import AsyncCursor, Cursor
+
+try:
+    from motor.motor_tornado import MotorClient
+except ImportError:  # pragma: no cover
+    MotorClient = None
+
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+except ImportError:  # pragma: no cover
+    AsyncIOMotorClient = None
 
 
-class Thingy(DatabaseThingy):
+class BaseThingy(DatabaseThingy):
     """Represents a document in a collection"""
     _client = None
-    _client_cls = MongoClient
+    _client_cls = None
     _collection = None
     _collection_name = None
-    _cursor_cls = Cursor
+    _cursor_cls = None
 
     @classproperty
     def _table(cls):
@@ -105,19 +116,9 @@ class Thingy(DatabaseThingy):
             cls._database = cls._client["test"]
 
     @classmethod
-    def create_index(cls, keys, **kwargs):
-        cls.add_index(keys, **kwargs)
-        cls.collection.create_index(keys, **kwargs)
-
-    @classmethod
-    def create_indexes(cls):
-        if hasattr(cls, "_indexes"):
-            for keys, kwargs in cls._indexes:
-                cls.collection.create_index(keys, **kwargs)
-
-    @classmethod
     def disconnect(cls, *args, **kwargs):
-        cls.client.close()
+        if cls._client:
+            cls._client.close()
         cls._client = None
         cls._database = None
 
@@ -138,13 +139,6 @@ class Thingy(DatabaseThingy):
         cursor = cls.find(filter, *args, **kwargs)
         return cursor.first()
 
-    @classmethod
-    def find_one_and_replace(cls, *args, **kwargs):
-        kwargs.setdefault("return_document", ReturnDocument.AFTER)
-        result = cls.collection.find_one_and_replace(*args, **kwargs)
-        if result is not None:
-            return cls(result)
-
     @property
     def id(self):
         return self.__dict__.get("id") or self._id
@@ -156,6 +150,32 @@ class Thingy(DatabaseThingy):
         else:
             self._id = value
 
+    def delete(self):
+        return self.get_collection().delete_one({"_id": self.id})
+
+
+class Thingy(BaseThingy):
+    _client_cls = MongoClient
+    _cursor_cls = Cursor
+
+    @classmethod
+    def create_index(cls, keys, **kwargs):
+        cls.add_index(keys, **kwargs)
+        cls.collection.create_index(keys, **kwargs)
+
+    @classmethod
+    def create_indexes(cls):
+        if hasattr(cls, "_indexes"):
+            for keys, kwargs in cls._indexes:
+                cls.collection.create_index(keys, **kwargs)
+
+    @classmethod
+    def find_one_and_replace(cls, *args, **kwargs):
+        kwargs.setdefault("return_document", ReturnDocument.AFTER)
+        result = cls.collection.find_one_and_replace(*args, **kwargs)
+        if result is not None:
+            return cls(result)
+
     def save(self, force_insert=False):
         data = self.__dict__
         if self.id is not None and not force_insert:
@@ -165,12 +185,48 @@ class Thingy(DatabaseThingy):
             self.get_collection().insert_one(data)
         return self
 
-    def delete(self):
-        return self.get_collection().delete_one({"_id": self.id})
+
+class AsyncThingy(BaseThingy):
+    _client_cls = MotorClient or AsyncIOMotorClient
+    _cursor_cls = AsyncCursor
+
+    @classmethod
+    async def create_index(cls, keys, **kwargs):
+        cls.add_index(keys, **kwargs)
+        await cls.collection.create_index(keys, **kwargs)
+
+    @classmethod
+    async def create_indexes(cls):
+        if hasattr(cls, "_indexes"):
+            for keys, kwargs in cls._indexes:
+                await cls.collection.create_index(keys, **kwargs)
+
+    @classmethod
+    async def find_one_and_replace(cls, *args, **kwargs):
+        kwargs.setdefault("return_document", ReturnDocument.AFTER)
+        result = await cls.collection.find_one_and_replace(*args, **kwargs)
+        if result is not None:
+            return cls(result)
+
+    async def save(self, force_insert=False):
+        data = self.__dict__
+        if self.id is not None and not force_insert:
+            filter = {"_id": self.id}
+            await self.get_collection().replace_one(filter, data, upsert=True)
+        else:
+            await self.get_collection().insert_one(data)
+        return self
 
 
-connect = Thingy.connect
-disconnect = Thingy.disconnect
+def connect(*args, **kwargs):
+    if AsyncThingy._client_cls is not None:
+        AsyncThingy.connect(*args, **kwargs)
+    Thingy.connect(*args, **kwargs)
+
+
+def disconnect(*args, **kwargs):
+    Thingy.disconnect(*args, **kwargs)
+    AsyncThingy.disconnect(*args, **kwargs)
 
 
 def create_indexes():
@@ -178,6 +234,9 @@ def create_indexes():
     for cls in registry:
         if issubclass(cls, Thingy):
             cls.create_indexes()
+        if issubclass(cls, AsyncThingy):
+            coroutine = cls.create_indexes()
+            asyncio.create_task(coroutine)
 
 
-__all__ = ["Thingy", "connect", "create_indexes"]
+__all__ = ["AsyncThingy", "Thingy", "connect", "create_indexes"]

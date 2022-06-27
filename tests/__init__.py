@@ -1,23 +1,29 @@
+import asyncio
+
 import pytest
 from bson import ObjectId
 
-from mongo_thingy import Thingy, connect, create_indexes, disconnect, registry
+from mongo_thingy import BaseThingy, connect, create_indexes, disconnect, registry
 
 
-def test_thingy_database(TestThingy, database):
+@pytest.mark.all_backends
+async def test_base_thingy_database(TestThingy, database):
     assert TestThingy.database == database
 
 
-def test_thingy_client(TestThingy, client):
+@pytest.mark.all_backends
+async def test_base_thingy_client(TestThingy, client):
     assert TestThingy.client == client
 
 
-def test_thingy_collection(TestThingy, collection):
+@pytest.mark.all_backends
+async def test_base_thingy_collection(TestThingy, collection):
     assert TestThingy.collection == collection
 
 
-def test_thingy_names(client):
-    class FooBar(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_names(thingy_cls, client):
+    class FooBar(thingy_cls):
         pass
 
     with pytest.raises(AttributeError):
@@ -30,76 +36,85 @@ def test_thingy_names(client):
     assert FooBar.collection_name == "bar"
 
 
-def test_thingy_database_name(client, database):
-    class FooBar(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_database_name(thingy_cls, client, database):
+    class FooBar(thingy_cls):
         _client = client
         _database_name = "fuu"
 
     assert FooBar.database_name == "fuu"
 
-    class FooBar(Thingy):
+    class FooBar(thingy_cls):
         _database = database
 
     assert FooBar.database_name == database.name
 
 
-def test_thingy_collection_name(client, collection):
-    class FooBar(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_collection_name(thingy_cls, client, collection):
+    class FooBar(thingy_cls):
         _client = client
         _collection_name = "baz"
 
     assert FooBar.collection_name == "baz"
 
-    class FooBar(Thingy):
+    class FooBar(thingy_cls):
         _collection = collection
 
     assert FooBar.collection_name == collection.name
 
 
-def test_thingy_database_from_client(client):
-    class FooBar(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_database_from_client(thingy_cls, client):
+    class FooBar(thingy_cls):
         _client = client
 
     assert FooBar.database == client.foo
 
 
-def test_thingy_database_from_collection(collection):
-    class Foo(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_database_from_collection(thingy_cls, collection):
+    class Foo(thingy_cls):
         _collection = collection
 
     assert Foo.database == collection.database
 
 
-def test_thingy_client_from_database(database):
-    class Foo(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_client_from_database(thingy_cls, database):
+    class Foo(thingy_cls):
         _database = database
 
     assert Foo.client == database.client
 
 
-def test_thingy_collection_from_database(database):
-    class Foo(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_collection_from_database(thingy_cls, database):
+    class Foo(thingy_cls):
         _database = database
 
     assert Foo.collection == database.foo
 
 
-def test_thingy_database_from_name(client):
-    class FooBar(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_database_from_name(thingy_cls, client):
+    class FooBar(thingy_cls):
         _client = client
 
     assert FooBar.database == client.foo
 
 
-def test_thingy_collection_from_name(database):
-    class Bar(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_collection_from_name(thingy_cls, database):
+    class Bar(thingy_cls):
         _database = database
 
     assert Bar.collection == database.bar
 
 
-def test_thingy_add_index(collection):
-    class Foo(Thingy):
+@pytest.mark.all_backends
+async def test_base_thingy_add_index(thingy_cls, collection):
+    class Foo(thingy_cls):
         _collection = collection
 
     Foo.add_index("foo", unique=True)
@@ -121,36 +136,45 @@ def test_thingy_count_documents(TestThingy, collection):
     assert TestThingy.count_documents({"foo": "bar"}) == 1
 
 
+async def test_async_thingy_count_documents(TestThingy, collection):
+    await collection.insert_one({"bar": "baz"})
+    await collection.insert_one({"foo": "bar"})
+
+    with pytest.deprecated_call():
+        await TestThingy.count()
+
+    assert await TestThingy.count_documents() == 2
+    assert await TestThingy.count_documents({"foo": "bar"}) == 1
+
+
 @pytest.mark.ignore_backends("montydb")
-@pytest.mark.parametrize("connect", [connect, Thingy.connect])
-@pytest.mark.parametrize("disconnect", [disconnect, Thingy.disconnect])
-def test_thingy_connect_disconnect(client_cls, connect, disconnect):
+def test_connect_disconnect(thingy_cls, client_cls):
     connect(client_cls=client_cls)
-    assert isinstance(Thingy.client, client_cls)
-    assert Thingy._database.name == "test"
+    assert isinstance(thingy_cls.client, client_cls)
+    assert thingy_cls._database.name == "test"
 
     disconnect()
-    assert Thingy._client is None
+    assert thingy_cls._client is None
 
-    Thingy._client_cls = client_cls
+    thingy_cls._client_cls = client_cls
     connect()
-    assert isinstance(Thingy.client, client_cls)
+    assert isinstance(thingy_cls.client, client_cls)
 
     disconnect()
-    assert Thingy._client is None
+    assert thingy_cls._client is None
 
     connect("mongodb://hostname/database")
-    assert Thingy.database is not None
-    assert Thingy.database.name == "database"
+    assert thingy_cls.database is not None
+    assert thingy_cls.database.name == "database"
     disconnect()
 
-    assert Thingy._client is None
+    assert thingy_cls._client is None
     with pytest.raises(AttributeError):
-        Thingy.client
+        thingy_cls.client
 
-    assert Thingy._database is None
+    assert thingy_cls._database is None
     with pytest.raises(AttributeError):
-        Thingy.database
+        thingy_cls.database
 
 
 @pytest.mark.ignore_backends("montydb")
@@ -161,6 +185,18 @@ def test_thingy_create_index(TestThingy, collection):
     ]
 
     indexes = collection.index_information()
+    assert "_id_" in indexes
+    assert "foo_1" in indexes
+    assert len(indexes) == 2
+
+
+async def test_async_thingy_create_index(TestThingy, collection):
+    await TestThingy.create_index("foo", unique=True)
+    assert TestThingy._indexes == [
+        ("foo", {"unique": True, "background": True})
+    ]
+
+    indexes = await collection.index_information()
     assert "_id_" in indexes
     assert "foo_1" in indexes
     assert len(indexes) == 2
@@ -178,6 +214,17 @@ def test_thingy_create_indexes(TestThingy, collection):
     assert len(indexes) == 2
 
 
+async def test_async_thingy_create_indexes(TestThingy, collection):
+    class Foo(TestThingy):
+        _indexes = [("foo", {"unique": True, "background": True})]
+
+    await Foo.create_indexes()
+    indexes = await collection.index_information()
+    assert "_id_" in indexes
+    assert "foo_1" in indexes
+    assert len(indexes) == 2
+
+
 def test_thingy_distinct(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
@@ -187,6 +234,15 @@ def test_thingy_distinct(TestThingy, collection):
     assert None in TestThingy.distinct("bar")
 
 
+async def test_async_thingy_distinct(TestThingy, collection):
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+    assert set(await TestThingy.distinct("bar")) == {"baz", "qux"}
+
+    await collection.insert_one({"bar": None})
+    assert None in await TestThingy.distinct("bar")
+
+
 def test_thingy_find(TestThingy, collection):
     collection.insert_many([{"bar": "baz"},
                             {"bar": "qux"}])
@@ -194,6 +250,17 @@ def test_thingy_find(TestThingy, collection):
     assert len(list(cursor.clone())) == 2
 
     thingy = cursor.next()
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baz"
+
+
+async def test_async_thingy_find(TestThingy, collection):
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+    cursor = TestThingy.find()
+    assert len(await cursor.clone().to_list(length=10)) == 2
+
+    thingy = await cursor.next()
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baz"
 
@@ -230,14 +297,23 @@ def test_thingy_find_one_and_replace(TestThingy, collection):
     assert thingy.bar == "baaz"
 
 
-def test_thingy_id(collection):
-    thingy = Thingy({"_id": "foo"})
+async def test_async_thingy_find_one_and_replace(TestThingy, collection):
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+    thingy = await TestThingy.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baaz"
+
+
+@pytest.mark.all_backends
+async def test_base_thingy_id(thingy_cls, collection):
+    thingy = thingy_cls({"_id": "foo"})
     assert thingy._id == thingy.id == "foo"
 
     thingy.id = "bar"
     assert thingy._id == thingy.id == "bar"
 
-    thingy = Thingy({"id": "foo"})
+    thingy = thingy_cls({"id": "foo"})
     assert thingy.id == "foo"
     assert thingy._id is None
 
@@ -263,6 +339,19 @@ def test_thingy_save(TestThingy, collection):
     assert thingy._id == "bar"
 
 
+async def test_async_thingy_save(TestThingy, collection):
+    thingy = TestThingy(bar="baz")
+    assert await TestThingy.count_documents() == 0
+    await thingy.save()
+    assert await TestThingy.count_documents() == 1
+    assert isinstance(thingy._id, ObjectId)
+
+    thingy = await TestThingy(id="bar", bar="qux").save()
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "qux"
+    assert thingy._id == "bar"
+
+
 def test_thingy_save_force_insert(TestThingy, collection):
     thingy = TestThingy().save(force_insert=True)
 
@@ -270,6 +359,15 @@ def test_thingy_save_force_insert(TestThingy, collection):
         TestThingy(_id=thingy._id, bar="qux").save(force_insert=True)
 
     assert TestThingy.count_documents() == 1
+
+
+async def test_async_thingy_save_force_insert(TestThingy, collection):
+    thingy = await TestThingy().save(force_insert=True)
+
+    with pytest.raises(Exception, match="[dD]uplicate [kK]ey [eE]rror"):
+        await TestThingy(_id=thingy._id, bar="qux").save(force_insert=True)
+
+    assert await TestThingy.count_documents() == 1
 
 
 def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
@@ -281,6 +379,15 @@ def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
     assert TestVersionedThingy.count_documents() == 1
 
 
+async def test_async_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
+    thingy = await TestVersionedThingy().save(force_insert=True)
+
+    with pytest.raises(Exception, match="[dD]uplicate [kK]ey [eE]rror"):
+        await TestVersionedThingy(_id=thingy._id, bar="qux").save(force_insert=True)
+
+    assert await TestVersionedThingy.count_documents() == 1
+
+
 def test_thingy_delete(TestThingy, collection):
     thingy = TestThingy(bar="baz").save()
     assert TestThingy.count_documents() == 1
@@ -288,26 +395,40 @@ def test_thingy_delete(TestThingy, collection):
     assert TestThingy.count_documents() == 0
 
 
+async def test_async_thingy_delete(TestThingy, collection):
+    thingy = await TestThingy(bar="baz").save()
+    assert await TestThingy.count_documents() == 1
+    await thingy.delete()
+    assert await TestThingy.count_documents() == 0
+
+
 @pytest.mark.ignore_backends("montydb")
-def test_create_indexes(database):
+@pytest.mark.all_backends
+async def test_create_indexes(is_async, thingy_cls, database):
     del registry[:]
 
-    class Foo(Thingy):
+    class Foo(thingy_cls):
         _database = database
         _indexes = [("foo", {})]
 
-    class Bar(Thingy):
+    class Bar(thingy_cls):
         _database = database
         _indexes = [("bar", {"unique": True}),
                     ("baz", {"sparse": True})]
 
     create_indexes()
-    assert len(Foo.collection.index_information()) == 2
-    assert len(Bar.collection.index_information()) == 3
+    if is_async:
+        await asyncio.sleep(0.1)
+        assert len(await Foo.collection.index_information()) == 2
+        assert len(await Bar.collection.index_information()) == 3
+    else:
+        assert len(Foo.collection.index_information()) == 2
+        assert len(Bar.collection.index_information()) == 3
 
 
-def test_github_issue_6(client):
-    class SynchronisedSwimming(Thingy):
+@pytest.mark.all_backends
+def test_github_issue_6(thingy_cls, client):
+    class SynchronisedSwimming(thingy_cls):
         _client = client
 
     assert SynchronisedSwimming.database.name == "synchronised"
