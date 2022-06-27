@@ -1,28 +1,34 @@
-import importlib
-
 import pytest
+from pymongo import MongoClient
 
 from mongo_thingy import Thingy
 from mongo_thingy.versioned import Revision, Versioned
 
-backends = ("pymongo", "mongomock", "montydb")
+try:
+    from mongomock import MongoClient as MongomockClient
+except ImportError:
+    MongomockClient = None
 
-for backend in backends:
-    try:
-        module = importlib.import_module(backend)
-    except ImportError:
-        module = None
-    globals()[backend] = module
+try:
+    from montydb import MontyClient
+except ImportError:
+    MontyClient = None
+
+backends = {
+    "pymongo": MongoClient,
+    "mongomock": MongomockClient,
+    "montydb": MontyClient,
+}
 
 
 def pytest_addoption(parser):
     help = "Test a single backend. Choices: {}".format(", ".join(backends))
-    parser.addoption("--backend", choices=backends, help=help)
+    parser.addoption("--backend", choices=backends.keys(), help=help)
 
 
 def pytest_generate_tests(metafunc):
     if "backend" in metafunc.fixturenames:
-        _backends = backends
+        _backends = backends.keys()
 
         option = metafunc.config.getoption("backend")
         if option:
@@ -37,17 +43,11 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture
 def client_cls(backend):
-    try:
-        if backend == "pymongo":
-            Thingy.client_cls = pymongo.MongoClient
-        if backend == "mongomock":
-            Thingy.client_cls = mongomock.MongoClient
-        if backend == "montydb":
-            Thingy.client_cls = montydb.MontyClient
-    except AttributeError:
+    client_cls = backends[backend]
+    if client_cls is None:
         pytest.skip()
-
-    return Thingy.client_cls
+    Thingy.client_cls = client_cls
+    return client_cls
 
 
 @pytest.fixture
