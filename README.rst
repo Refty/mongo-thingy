@@ -1,9 +1,10 @@
 .. _Thingy: https://github.com/Refty/thingy
 .. _PyMongo: https://github.com/mongodb/mongo-python-driver
 
-============
-Mongo-Thingy
-============
+.. image:: https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light
+   :alt: Mongo-Thingy
+
+|
 
 .. image:: https://img.shields.io/pypi/v/mongo-thingy.svg
    :target: https://pypi.python.org/pypi/Mongo-Thingy
