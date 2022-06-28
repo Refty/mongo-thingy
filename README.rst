@@ -19,30 +19,25 @@
 
 |
 
-Mongo-Thingy is the most idiomatic and friendly-yet-powerful way to use
-MongoDB with Python.
+**Mongo-Thingy is the most idiomatic and friendly-yet-powerful way to use
+MongoDB with Python.**
 
-It is an "Object-Document Mapper" that gives you full advantage of MongoDB
-schema-less design by **not** asking you to define schemas in your code, but
-with all the powerful features you would expect from such a library.
+It is an *"Object-Document Mapper"* that gives you full advantage of MongoDB
+schema-less design by **not** asking you to define schemas in your code.
 
-Mongo-Thingy has:
+What you'll get:
 
-- a simple and robust code base, with 100% coverage and few dependencies;
+- a simple and robust pure-Python code base, with 100% coverage and few dependencies;
 - PyMongo_ query language - no need to learn yet another one;
 - Thingy_ views - control what to show, and create fields based on other fields;
-- versioning (optional) - rollback to any point in any thingy history;
+- versioning *(optional)* - rollback to any point in any thingy history;
 - and more!
-
-Documentation: http://mongo-thingy.readthedocs.io
 
 
 Compatibility
 =============
 
-Mongo-Thingy is pure-Python.
-
-It supports all Python and MongoDB versions supported by PyMongo_, namely:
+We support all Python and MongoDB versions supported by PyMongo_, namely:
 
 - CPython 3.6+ and PyPy3.6+
 - MongoDB 3.6, 4.0, 4.2, 4.4, and 5.0.
@@ -53,7 +48,7 @@ Install
 
 .. code-block:: sh
 
-   $ pip install mongo-thingy
+   pip install mongo-thingy
 
 
 Examples
@@ -250,7 +245,7 @@ Create all indexes of all thingies at once
 Tests
 =====
 
-To run Mongo-Thingy tests:
+To run the tests suite:
 
 * make sure you have a MongoDB database running on ``localhost:27017`` (you can
   spawn one with ``docker-compose up -d``);
@@ -271,9 +266,3 @@ Sponsors
        <a href="https://refty.co/"><img src="https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/refty.png" alt="Refty"></a>
        &nbsp;&nbsp;&nbsp;
    </div>
-
-
-License
-=======
-
-MIT
