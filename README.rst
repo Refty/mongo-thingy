@@ -4,18 +4,18 @@
 .. image:: https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light
    :alt: Mongo-Thingy
 
-|
+.. raw:: html
 
-.. image:: https://img.shields.io/pypi/v/mongo-thingy.svg
-   :target: https://pypi.python.org/pypi/Mongo-Thingy
-.. image:: https://img.shields.io/github/license/Refty/mongo-thingy.svg
-   :target: https://github.com/Refty/mongo-thingy/blob/master/LICENSE
-.. image:: https://img.shields.io/github/checks-status/Refty/mongo-thingy/master.svg
-   :target: https://github.com/Refty/mongo-thingy/actions
-.. image:: https://img.shields.io/coveralls/Refty/mongo-thingy.svg
-   :target: https://coveralls.io/github/Refty/mongo-thingy
-.. image:: https://readthedocs.org/projects/mongo-thingy/badge
-   :target: http://mongo-thingy.readthedocs.io
+   <div align="center">
+       <a href="https://pypi.org/project/mongo-thingy"><img src="https://img.shields.io/pypi/v/mongo-thingy.svg" alt="PyPI"></a>
+       <img src="https://img.shields.io/pypi/pyversions/mongo-thingy" alt="Supported Python Versions">
+       <a href="LICENSE"><img src="https://img.shields.io/github/license/refty/mongo-thingy" alt="License"></a>
+       <a href="https://github.com/ambv/black"><img src="https://img.shields.io/badge/code%20style-black-black" alt="Code style"></a>
+       <br/>
+       <a href="https://github.com/Refty/mongo-thingy/actions"><img src="https://img.shields.io/github/workflow/status/Refty/mongo-thingy/Tests" alt="Tests"></a>
+       <a href="https://coveralls.io/github/Refty/mongo-thingy"><img src="https://img.shields.io/coveralls/Refty/mongo-thingy.svg" alt="Tests"></a>
+       <a href="http://mongo-thingy.readthedocs.io"><img src="https://readthedocs.org/projects/mongo-thingy/badge" alt="Docs"></a>
+   </div>
 
 |
 
@@ -261,17 +261,16 @@ To run Mongo-Thingy tests:
 Sponsors
 ========
 
-.. image:: https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/numberly.png
-    :alt: Numberly
-    :align: center
-    :target: https://numberly.com/
+.. raw:: html
 
-|
-
-.. image:: https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/refty.png
-    :alt: Refty
-    :align: center
-    :target: https://refty.co/
+   <div align="center">
+       &nbsp;&nbsp;&nbsp;
+       <a href="https://numberly.com/"><img src="https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/numberly.png" alt="Numberly"></a>
+       &nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;
+       <a href="https://refty.co/"><img src="https://raw.githubusercontent.com/Refty/mongo-thingy/master/img/refty.png" alt="Refty"></a>
+       &nbsp;&nbsp;&nbsp;
+   </div>
 
 
 License
