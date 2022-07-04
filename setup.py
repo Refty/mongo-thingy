@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 def get_description():
-    with open("README.rst") as file:
+    with open("README.md") as file:
         return file.read()
 
 
@@ -16,6 +16,7 @@ setup(
     description=("The most idiomatic and friendly-yet-powerful way to use "
                  "MongoDB with Python"),
     long_description=get_description(),
+    long_description_content_type="text/markdown",
     packages=["mongo_thingy"],
     include_package_data=True,
     zip_safe=False,

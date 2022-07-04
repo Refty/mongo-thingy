@@ -3,3 +3,4 @@ pymongo==4.0.2
 pytest==7.0.1
 pytest-cov==3.0.0
 sphinx==4.4.0
+m2r2==0.3.2
