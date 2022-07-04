@@ -94,6 +94,10 @@ class Cursor(BaseCursor):
         document = self.delegate.__getitem__(index)
         return self.bind(document)
 
+    def delete(self):
+        ids = self.distinct("_id")
+        return self.thingy_cls.collection.delete_many({"_id": {"$in": ids}})
+
     def first(self):
         try:
             document = self.delegate.clone().limit(-1).next()
@@ -109,6 +113,10 @@ class AsyncCursor(BaseCursor):
     async def __aiter__(self):
         async for document in self.delegate:
             yield self.bind(document)
+
+    async def delete(self):
+        ids = await self.distinct("_id")
+        return await self.thingy_cls.collection.delete_many({"_id": {"$in": ids}})
 
     async def first(self):
         try:
