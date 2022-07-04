@@ -40,6 +40,8 @@ class _AsyncBindingProxy(_Proxy):
         @functools.wraps(method)
         async def wrapper(*args, **kwargs):
             result = await method(*args, **kwargs)
+            if isinstance(result, list):
+                return [cursor.bind(r) for r in result]
             return cursor.bind(result)
 
         return wrapper
@@ -107,7 +109,7 @@ class Cursor(BaseCursor):
 
 
 class AsyncCursor(BaseCursor):
-    to_list = _Proxy("to_list")
+    to_list = _AsyncBindingProxy("to_list")
     next = __anext__ = _AsyncBindingProxy("__anext__")
 
     async def __aiter__(self):
