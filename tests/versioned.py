@@ -3,13 +3,13 @@ import pytest
 from mongo_thingy.cursor import Cursor
 
 
-def test_version_save(TestRevision):
-    version = TestRevision().save()
-    assert version.creation_date
+def test_revision_save(TestRevision):
+    revision = TestRevision().save()
+    assert revision.creation_date
 
 
 @pytest.mark.ignore_backends("montydb")
-def test_version_indexes(TestRevision):
+def test_revision_indexes(TestRevision):
     TestRevision.create_indexes()
     indexes = TestRevision.collection.index_information()
     assert "document_id_-1_document_type_-1" in indexes
@@ -20,9 +20,9 @@ def test_versioned_get_revisions(TestVersionedThingy):
     cursor = thingy.get_revisions()
     assert isinstance(cursor, Cursor)
 
-    version = cursor[0]
-    assert version.document == thingy.__dict__
-    assert version.document_type == "TestVersionedThingy"
+    revision = cursor[0]
+    assert revision.document == thingy.__dict__
+    assert revision.document_type == "TestVersionedThingy"
 
 
 def test_versioned_author(TestVersionedThingy):
