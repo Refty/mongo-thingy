@@ -11,6 +11,7 @@ from mongo_thingy.cursor import Cursor
 class Thingy(DatabaseThingy):
     """Represents a document in a collection"""
     _client = None
+    _client_cls = MongoClient
     _collection = None
     _collection_name = None
     _cursor_cls = Cursor
@@ -93,11 +94,14 @@ class Thingy(DatabaseThingy):
         return cls.count_documents(filter=filter, *args, **kwargs)
 
     @classmethod
-    def connect(cls, *args, **kwargs):
-        cls._client = MongoClient(*args, **kwargs)
+    def connect(cls, *args, client_cls=None, **kwargs):
+        if not client_cls:
+            client_cls = cls._client_cls
+
+        cls._client = client_cls(*args, **kwargs)
         try:
             cls._database = cls._client.get_database()
-        except ConfigurationError:
+        except (ConfigurationError, TypeError):
             cls._database = cls._client["test"]
 
     @classmethod
@@ -122,8 +126,9 @@ class Thingy(DatabaseThingy):
         return cls.collection.distinct(*args, **kwargs)
 
     @classmethod
-    def find(cls, *args, **kwargs):
-        return cls._cursor_cls(cls.collection, thingy_cls=cls, *args, **kwargs)
+    def find(cls, *args, view=None, **kwargs):
+        delegate = cls.collection.find(*args, **kwargs)
+        return cls._cursor_cls(delegate, thingy_cls=cls, view=view)
 
     @classmethod
     def find_one(cls, filter=None, *args, **kwargs):

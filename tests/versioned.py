@@ -8,6 +8,7 @@ def test_version_save(TestRevision):
     assert version.creation_date
 
 
+@pytest.mark.ignore_backends("montydb")
 def test_version_indexes(TestRevision):
     TestRevision.create_indexes()
     indexes = TestRevision.collection.index_information()
