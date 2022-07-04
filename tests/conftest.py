@@ -1,32 +1,63 @@
-import importlib
+import inspect
 
 import pytest
+from pymongo import MongoClient
 
-from mongo_thingy import Thingy
+from mongo_thingy import AsyncThingy, BaseThingy, Thingy
 from mongo_thingy.versioned import Revision, Versioned
 
-backends = ("pymongo", "mongomock", "montydb")
+try:
+    from mongomock import MongoClient as MongomockClient
+except ImportError:
+    MongomockClient = None
 
-for backend in backends:
-    try:
-        module = importlib.import_module(backend)
-    except ImportError:
-        module = None
-    globals()[backend] = module
+try:
+    from montydb import MontyClient
+except ImportError:
+    MontyClient = None
+
+try:
+    from motor.motor_tornado import MotorClient
+except ImportError:
+    MotorClient = None
+
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+except ImportError:
+    AsyncIOMotorClient = None
+
+sync_backends = {
+    "pymongo": MongoClient,
+    "mongomock": MongomockClient,
+    "montydb": MontyClient,
+}
+
+async_backends = {
+    "motor_tornado": MotorClient,
+    "motor_asyncio": AsyncIOMotorClient,
+}
+
+backends = {**sync_backends, **async_backends}
 
 
 def pytest_addoption(parser):
     help = "Test a single backend. Choices: {}".format(", ".join(backends))
-    parser.addoption("--backend", choices=backends, help=help)
+    parser.addoption("--backend", choices=backends.keys(), help=help)
 
 
 def pytest_generate_tests(metafunc):
     if "backend" in metafunc.fixturenames:
-        _backends = backends
+        if metafunc.definition.get_closest_marker("all_backends"):
+            _backends = backends.keys()
+        elif inspect.getsource(metafunc.function)[0:5] == "async":
+            # pytest-asyncio has wrapped the async function in a sync function
+            _backends = async_backends.keys()
+        else:
+            _backends = sync_backends.keys()
 
         option = metafunc.config.getoption("backend")
         if option:
-            _backends = [option]
+            _backends = [b for b in _backends if b == option]
 
         marker = metafunc.definition.get_closest_marker("ignore_backends")
         if marker:
@@ -37,17 +68,11 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture
 def client_cls(backend):
-    try:
-        if backend == "pymongo":
-            Thingy.client_cls = pymongo.MongoClient
-        if backend == "mongomock":
-            Thingy.client_cls = mongomock.MongoClient
-        if backend == "montydb":
-            Thingy.client_cls = montydb.MontyClient
-    except AttributeError:
+    client_cls = backends[backend]
+    if client_cls is None:
         pytest.skip()
-
-    return Thingy.client_cls
+    BaseThingy.client_cls = client_cls
+    return client_cls
 
 
 @pytest.fixture
@@ -63,15 +88,30 @@ def database(client):
 
 
 @pytest.fixture
-def collection(request, database):
+def is_async(backend):
+    return backend in async_backends
+
+
+@pytest.fixture
+async def collection(request, is_async, database):
     collection = database[request.node.name]
-    collection.delete_many({})
+    if is_async:
+        await collection.delete_many({})
+    else:
+        collection.delete_many({})
     return collection
 
 
 @pytest.fixture
-def TestThingy(collection):
-    class TestThingy(Thingy):
+def thingy_cls(is_async):
+    if is_async:
+        return AsyncThingy
+    return Thingy
+
+
+@pytest.fixture
+def TestThingy(thingy_cls, collection):
+    class TestThingy(thingy_cls):
         _collection = collection
 
     return TestThingy

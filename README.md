@@ -2,6 +2,7 @@
 [thingy]: https://github.com/Refty/thingy
 [mongomock]: https://github.com/mongomock/mongomock
 [montydb]: https://github.com/davidlatwe/montydb
+[motor]: https://github.com/mongodb/motor
 
 ![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light)
 
@@ -28,6 +29,7 @@ What you'll get:
 - a simple and robust pure-Python code base, with 100% coverage and few
   dependencies;
 - [PyMongo][pymongo] query language - no need to learn yet another one;
+- both sync and async support! choose what suits you best;
 - [Thingy][thingy] views - control what to show, and create fields based on
   other fields;
 - swappable backend - wanna use SQLite behind the scenes? well, you can;
@@ -39,15 +41,21 @@ What you'll get:
 We support all Python and MongoDB versions supported by [PyMongo][pymongo],
 namely:
 
-- CPython 3.6+ and PyPy3.6+
+- CPython 3.7+ and PyPy3.7+
 - MongoDB 3.6, 4.0, 4.2, 4.4, and 5.0.
 
 As a backend, Mongo-Thingy supports the following libraries:
 
-- [PyMongo][pymongo]
-- [Mongomock][mongomock]
-- [MontyDB][montydb]
-- more soon™
+- Synchronous:
+
+  * [PyMongo][pymongo] (default)
+  * [Mongomock][mongomock]
+  * [MontyDB][montydb]
+
+- Asynchronous:
+
+  * [Motor][motor] (default when Motor is installed)
+  * [Motor][motor] with Tornado (default when Motor and Tornado are installed)
 
 # Install
 
@@ -75,7 +83,23 @@ pip install mongo-thingy
 User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 42})
 ```
 
-To use another backend than [PyMongo][pymongo], just pass its client class with
+In an AsyncIO (or Tornado) environment, use the asynchronous class instead:
+
+```python
+>>> from mongo_thingy import connect, AsyncThingy
+>>> connect("mongodb://localhost/test")
+
+>>> class User(AsyncThingy):
+...     pass
+
+>>> user = await User({"name": "Mr. Foo", "age": 42}).save()
+>>> await User.count_documents()
+1
+>>> await User.find_one({"age": 42})
+User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 42})
+```
+
+To use another backend than the default ones, just pass its client class with
 ``client_cls``:
 
 ```python
