@@ -1,3 +1,5 @@
+import pytest
+
 from mongo_thingy import Thingy
 from mongo_thingy.cursor import (_Proxy, _BindingProxy, _ChainingProxy,
                                  AsyncCursor, Cursor,)
@@ -262,3 +264,36 @@ async def test_async_cursor_view(thingy_cls, collection):
 
     async for dictionnary in Foo.find().view("empty"):
         assert dictionnary == {}
+
+
+@pytest.mark.ignore_backends("montydb")
+def test_cursor_delete(thingy_cls, collection):
+    class Foo(thingy_cls):
+        _collection = collection
+
+    collection.insert_many([{"bar": "baz"},
+                            {"bar": "qux"}])
+    Foo.find().delete()
+    assert collection.count_documents({}) == 0
+
+    collection.insert_many([{"bar": "baz"},
+                            {"bar": "qux"}])
+    Foo.find({"bar": "baz"}).delete()
+    assert collection.count_documents({}) == 1
+    assert Foo.find_one().bar == "qux"
+
+
+async def test_async_cursor_delete(thingy_cls, collection):
+    class Foo(thingy_cls):
+        _collection = collection
+
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+    await Foo.find().delete()
+    assert await collection.count_documents({}) == 0
+
+    await collection.insert_many([{"bar": "baz"},
+                                  {"bar": "qux"}])
+    await Foo.find({"bar": "baz"}).delete()
+    assert await collection.count_documents({}) == 1
+    assert (await Foo.find_one()).bar == "qux"
