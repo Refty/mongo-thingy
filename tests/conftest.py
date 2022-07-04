@@ -4,7 +4,7 @@ import pytest
 from pymongo import MongoClient
 
 from mongo_thingy import AsyncThingy, BaseThingy, Thingy
-from mongo_thingy.versioned import Revision, Versioned
+from mongo_thingy.versioned import AsyncRevision, AsyncVersioned, Revision, Versioned
 
 try:
     from mongomock import MongoClient as MongomockClient
@@ -118,17 +118,34 @@ def TestThingy(thingy_cls, collection):
 
 
 @pytest.fixture
-def TestRevision(database):
-    class TestRevision(Revision):
+def revision_cls(is_async):
+    if is_async:
+        return AsyncRevision
+    return Revision
+
+
+@pytest.fixture
+async def TestRevision(is_async, revision_cls, database):
+    class TestRevision(revision_cls):
         _database = database
 
-    TestRevision.collection.delete_many({})
+    if is_async:
+        await TestRevision.collection.delete_many({})
+    else:
+        TestRevision.collection.delete_many({})
     return TestRevision
 
 
 @pytest.fixture
-def TestVersioned(TestRevision):
-    class TestVersioned(Versioned):
+def versioned_cls(is_async):
+    if is_async:
+        return AsyncVersioned
+    return Versioned
+
+
+@pytest.fixture
+def TestVersioned(versioned_cls, TestRevision):
+    class TestVersioned(versioned_cls):
         _revision_cls = TestRevision
 
     return TestVersioned
