@@ -1,3 +1,6 @@
+[pymongo]: https://github.com/mongodb/mongo-python-driver
+[thingy]: https://github.com/Refty/thingy
+
 ![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light)
 
 <div align="center">
@@ -9,34 +12,32 @@
     <a href="https://github.com/Refty/mongo-thingy/actions"><img src="https://img.shields.io/github/workflow/status/Refty/mongo-thingy/Tests" alt="Tests"></a>
     <a href="https://coveralls.io/github/Refty/mongo-thingy"><img src="https://img.shields.io/coveralls/Refty/mongo-thingy.svg" alt="Tests"></a>
     <a href="http://mongo-thingy.readthedocs.io"><img src="https://readthedocs.org/projects/mongo-thingy/badge" alt="Docs"></a>
+    <br /><br />
 </div>
 
-**_Mongo-Thingy_ is the most idiomatic and friendly-yet-powerful way to
-use MongoDB with Python.**
+**_Mongo-Thingy_ is the most idiomatic and friendly-yet-powerful way to use
+MongoDB with Python.**
 
-It is an _"Object-Document Mapper"_ that gives you full advantage of
-MongoDB schema-less design by **not** asking you to define schemas in
-your code.
+It is an _"Object-Document Mapper"_ that gives you full advantage of MongoDB
+schema-less design by **not** asking you to define schemas in your code.
 
 What you'll get:
 
-  - a simple and robust pure-Python code base, with 100% coverage and
-    few dependencies;
-  - [PyMongo](https://github.com/mongodb/mongo-python-driver) query
-    language - no need to learn yet another one;
-  - [Thingy](https://github.com/Refty/thingy) views - control what to
-    show, and create fields based on other fields;
-  - versioning *(optional)* - rollback to any point in any thingy
-    history;
-  - and more\!
+- a simple and robust pure-Python code base, with 100% coverage and few
+  dependencies;
+- [PyMongo][pymongo] query language - no need to learn yet another one;
+- [Thingy][thingy] views - control what to show, and create fields based on
+  other fields;
+- versioning *(optional)* - rollback to any point in any thingy history;
+- and more!
 
 # Compatibility
 
-We support all Python and MongoDB versions supported by
-[PyMongo](https://github.com/mongodb/mongo-python-driver), namely:
+We support all Python and MongoDB versions supported by [PyMongo][pymongo],
+namely:
 
-  - CPython 3.6+ and PyPy3.6+
-  - MongoDB 3.6, 4.0, 4.2, 4.4, and 5.0.
+- CPython 3.6+ and PyPy3.6+
+- MongoDB 3.6, 4.0, 4.2, 4.4, and 5.0.
 
 # Install
 
@@ -212,10 +213,9 @@ Collection(Database(MongoClient('localhost', 27017), 'database'), 'bar')
 
 To run the tests suite:
 
-  - make sure you have a MongoDB database running on `localhost:27017`
-    (you can spawn one with `docker-compose up -d`);
-  - install developers requirements with `pip install -r
-    requirements.txt`;
+  - make sure you have a MongoDB database running on `localhost:27017` (you can
+    spawn one with `docker-compose up -d`);
+  - install developers requirements with `pip install -r requirements.txt`;
   - run `pytest`.
 
 # Sponsors
