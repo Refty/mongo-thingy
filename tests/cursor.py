@@ -1,8 +1,13 @@
 import pytest
 
 from mongo_thingy import Thingy
-from mongo_thingy.cursor import (_Proxy, _BindingProxy, _ChainingProxy,
-                                 AsyncCursor, Cursor,)
+from mongo_thingy.cursor import (
+    AsyncCursor,
+    Cursor,
+    _BindingProxy,
+    _ChainingProxy,
+    _Proxy,
+)
 
 
 def test_proxy():
@@ -79,8 +84,7 @@ def test_cursor_bind():
 
 
 def test_cursor_first(thingy_cls, collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
     cursor = Cursor(collection.find())
 
@@ -105,8 +109,7 @@ def test_cursor_first(thingy_cls, collection):
 
 
 async def test_async_cursor_first(thingy_cls, collection):
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
     cursor = AsyncCursor(collection.find())
 
@@ -131,8 +134,7 @@ async def test_async_cursor_first(thingy_cls, collection):
 
 
 def test_cursor_getitem(collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
     cursor = Cursor(collection.find())
 
@@ -159,8 +161,7 @@ def test_cursor_getitem(collection):
 
 
 def test_cursor_clone(collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
     cursor = Cursor(collection.find())
 
@@ -175,8 +176,7 @@ def test_cursor_clone(collection):
 
 
 async def test_async_cursor_clone(collection):
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
     cursor = AsyncCursor(collection.find())
 
@@ -194,8 +194,7 @@ def test_cursor_next(thingy_cls, collection):
     class Foo(thingy_cls):
         _collection = collection
 
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     cursor = Cursor(collection.find(), thingy_cls=Foo)
 
     result = cursor.next()
@@ -211,8 +210,7 @@ async def test_async_cursor_next(thingy_cls, collection):
     class Foo(thingy_cls):
         _collection = collection
 
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     cursor = AsyncCursor(collection.find(), thingy_cls=Foo)
 
     result = await cursor.next()
@@ -228,8 +226,7 @@ async def test_async_cursor_to_list(thingy_cls, collection):
     class Foo(thingy_cls):
         _collection = collection
 
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     cursor = AsyncCursor(collection.find(), thingy_cls=Foo)
 
     results = await cursor.to_list(length=10)
@@ -245,8 +242,7 @@ def test_cursor_view(thingy_cls, collection):
         _collection = collection
 
     Foo.add_view("empty")
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
     for dictionnary in Cursor(collection.find(), thingy_cls=Foo, view="empty"):
         assert dictionnary == {}
@@ -266,13 +262,16 @@ async def test_async_cursor_view(thingy_cls, collection):
         _collection = collection
 
     Foo.add_view("empty")
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
 
-    async for dictionnary in AsyncCursor(collection.find(), thingy_cls=Foo, view="empty"):
+    async for dictionnary in AsyncCursor(
+        collection.find(), thingy_cls=Foo, view="empty"
+    ):
         assert dictionnary == {}
 
-    async for dictionnary in AsyncCursor(collection.find(), thingy_cls=Foo).view("empty"):
+    async for dictionnary in AsyncCursor(collection.find(), thingy_cls=Foo).view(
+        "empty"
+    ):
         assert dictionnary == {}
 
     async for dictionnary in Foo.find(view="empty"):
@@ -287,13 +286,11 @@ def test_cursor_delete(thingy_cls, collection):
     class Foo(thingy_cls):
         _collection = collection
 
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     Foo.find().delete()
     assert collection.count_documents({}) == 0
 
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     Foo.find({"bar": "baz"}).delete()
     assert collection.count_documents({}) == 1
     assert Foo.find_one().bar == "qux"
@@ -303,13 +300,11 @@ async def test_async_cursor_delete(thingy_cls, collection):
     class Foo(thingy_cls):
         _collection = collection
 
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     await Foo.find().delete()
     assert await collection.count_documents({}) == 0
 
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     await Foo.find({"bar": "baz"}).delete()
     assert await collection.count_documents({}) == 1
     assert (await Foo.find_one()).bar == "qux"

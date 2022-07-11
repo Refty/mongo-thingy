@@ -159,5 +159,12 @@ def TestVersionedThingy(TestVersioned, TestThingy):
     return TestVersionedThingy
 
 
-__all__ = ["TestThingy", "TestRevision", "TestVersioned",
-           "TestVersionedThingy", "client", "database", "collection"]
+__all__ = [
+    "TestThingy",
+    "TestRevision",
+    "TestVersioned",
+    "TestVersionedThingy",
+    "client",
+    "database",
+    "collection",
+]

@@ -4,7 +4,7 @@ from collections.abc import Mapping
 
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import ConfigurationError
-from thingy import classproperty, DatabaseThingy, registry
+from thingy import DatabaseThingy, classproperty, registry
 
 from mongo_thingy.cursor import AsyncCursor, Cursor
 
@@ -21,6 +21,7 @@ except ImportError:  # pragma: no cover
 
 class BaseThingy(DatabaseThingy):
     """Represents a document in a collection"""
+
     _client = None
     _client_cls = None
     _collection = None
@@ -100,8 +101,9 @@ class BaseThingy(DatabaseThingy):
 
     @classmethod
     def count(cls, filter=None, *args, **kwargs):
-        warnings.warn("count is deprecated. Use count_documents instead.",
-                      DeprecationWarning)
+        warnings.warn(
+            "count is deprecated. Use count_documents instead.", DeprecationWarning
+        )
         return cls.count_documents(filter=filter, *args, **kwargs)
 
     @classmethod

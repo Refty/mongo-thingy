@@ -79,7 +79,9 @@ class BaseCursor:
 
     def clone(self):
         delegate = self.delegate.clone()
-        return self.__class__(delegate, thingy_cls=self.thingy_cls, view=self.thingy_view)
+        return self.__class__(
+            delegate, thingy_cls=self.thingy_cls, view=self.thingy_view
+        )
 
     def get_view(self, name):
         return self.thingy_cls._views[name]

@@ -8,13 +8,11 @@ from mongo_thingy.cursor import AsyncCursor, BaseCursor, Cursor
 
 
 class BaseRevisionCursor(BaseCursor):
-
     def __init__(self, *args, **kwargs):
         super(BaseRevisionCursor, self).__init__(*args, **kwargs)
 
 
 class RevisionCursor(Cursor, BaseRevisionCursor):
-
     def __getitem__(self, index):
         if index < 0 and self.thingy:
             version = self.thingy.count_revisions()
@@ -28,14 +26,17 @@ class AsyncRevisionCursor(AsyncCursor, BaseRevisionCursor):
 
 class BaseRevision(BaseThingy):
     """Revision of a document"""
+
     _collection_name = "revision"
     _cursor_cls = None
 
     @classmethod
     def from_thingy(cls, thingy, author=None, operation="update"):
-        version = cls(document_id=thingy.id,
-                      document_type=type(thingy).__name__,
-                      operation=operation)
+        version = cls(
+            document_id=thingy.id,
+            document_type=type(thingy).__name__,
+            operation=operation,
+        )
         if operation != "delete":
             version.document = thingy.__dict__
         if author:
@@ -48,8 +49,7 @@ class BaseRevision(BaseThingy):
         )
 
 
-BaseRevision.add_index([("document_id", DESCENDING),
-                        ("document_type", DESCENDING)])
+BaseRevision.add_index([("document_id", DESCENDING), ("document_type", DESCENDING)])
 
 
 class Revision(Thingy, BaseRevision):
@@ -74,11 +74,11 @@ class AsyncRevision(AsyncThingy, BaseRevision):
 
 class BaseVersioned:
     """Mixin to versionate changes in a collection"""
+
     _revisions_cls = None
 
     def get_revisions(self, **kwargs):
-        filter = {"document_id": self.id,
-                  "document_type": type(self).__name__}
+        filter = {"document_id": self.id, "document_type": type(self).__name__}
         filter.update(kwargs)
 
         cursor = self._revision_cls.find(filter)
@@ -86,13 +86,11 @@ class BaseVersioned:
         return cursor.sort("_id", ASCENDING)
 
     def count_revisions(self, **kwargs):
-        filter = {"document_id": self.id,
-                  "document_type": type(self).__name__}
+        filter = {"document_id": self.id, "document_type": type(self).__name__}
         return self._revision_cls.count_documents(filter, **kwargs)
 
 
 class Versioned(BaseVersioned):
-
     def is_versioned(self):
         return bool(self.count_revisions(limit=1))
 
@@ -133,14 +131,14 @@ class Versioned(BaseVersioned):
 
     def delete(self, author=None):
         result = super(Versioned, self).delete()
-        version = self._revision_cls.from_thingy(self, author=author,
-                                                 operation="delete")
+        version = self._revision_cls.from_thingy(
+            self, author=author, operation="delete"
+        )
         version.save()
         return result
 
 
 class AsyncVersioned(BaseVersioned):
-
     async def is_versioned(self):
         return bool(await self.count_revisions(limit=1))
 
@@ -160,8 +158,9 @@ class AsyncVersioned(BaseVersioned):
 
     async def delete(self, author=None):
         result = await super(AsyncVersioned, self).delete()
-        version = self._revision_cls.from_thingy(self, author=author,
-                                                 operation="delete")
+        version = self._revision_cls.from_thingy(
+            self, author=author, operation="delete"
+        )
         await version.save()
         return result
 

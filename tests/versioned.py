@@ -1,5 +1,3 @@
-import asyncio
-
 import pytest
 
 from mongo_thingy.cursor import AsyncCursor, Cursor
@@ -147,13 +145,17 @@ def test_versioned_revisions_operation(TestVersionedThingy):
 async def test_async_versioned_revisions_operation(TestVersionedThingy):
     thingy = await TestVersionedThingy({"bar": "baz"}).save()
     revisions = await thingy.get_revisions().to_list(length=10)
-    from pprint import pprint; pprint(revisions)
+    from pprint import pprint
+
+    pprint(revisions)
     assert revisions[0].operation == "create"
 
     thingy.bar = "qux"
     await thingy.save()
     revisions = await thingy.get_revisions().to_list(length=10)
-    from pprint import pprint; pprint(revisions)
+    from pprint import pprint
+
+    pprint(revisions)
     assert revisions[1].operation == "update"
 
     await thingy.delete()

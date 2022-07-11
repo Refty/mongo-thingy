@@ -210,7 +210,7 @@ You can either specify the collection name:
 
 ```python
 >>> class Foo(Thingy):
-...   collection_name = "bar" 
+...   collection_name = "bar"
 ```
 
 or the collection directly:

@@ -13,18 +13,16 @@ setup(
     license="MIT",
     author="Guillaume Gelin",
     author_email="guillaume@refty.co",
-    description=("The most idiomatic and friendly-yet-powerful way to use "
-                 "MongoDB with Python"),
+    description=(
+        "The most idiomatic and friendly-yet-powerful way to use " "MongoDB with Python"
+    ),
     long_description=get_description(),
     long_description_content_type="text/markdown",
     packages=["mongo_thingy"],
     include_package_data=True,
     zip_safe=False,
     platforms="any",
-    install_requires=[
-        "thingy>=0.9.0",
-        "pymongo>=4"
-    ],
+    install_requires=["thingy>=0.9.0", "pymongo>=4"],
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -35,6 +33,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Topic :: Database",
-        "Topic :: Software Development :: Libraries :: Python Modules"
-    ]
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
 )

@@ -9,3 +9,4 @@ pytest-cov==3.0.0
 pytest-asyncio==0.18.3
 sphinx==4.4.0
 m2r2==0.3.2
+pre-commit==2.19.0

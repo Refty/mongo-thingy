@@ -3,7 +3,7 @@ import asyncio
 import pytest
 from bson import ObjectId
 
-from mongo_thingy import BaseThingy, connect, create_indexes, disconnect, registry
+from mongo_thingy import connect, create_indexes, disconnect, registry
 
 
 @pytest.mark.all_backends
@@ -180,9 +180,7 @@ def test_connect_disconnect(thingy_cls, client_cls):
 @pytest.mark.ignore_backends("montydb")
 def test_thingy_create_index(TestThingy, collection):
     TestThingy.create_index("foo", unique=True)
-    assert TestThingy._indexes == [
-        ("foo", {"unique": True, "background": True})
-    ]
+    assert TestThingy._indexes == [("foo", {"unique": True, "background": True})]
 
     indexes = collection.index_information()
     assert "_id_" in indexes
@@ -192,9 +190,7 @@ def test_thingy_create_index(TestThingy, collection):
 
 async def test_async_thingy_create_index(TestThingy, collection):
     await TestThingy.create_index("foo", unique=True)
-    assert TestThingy._indexes == [
-        ("foo", {"unique": True, "background": True})
-    ]
+    assert TestThingy._indexes == [("foo", {"unique": True, "background": True})]
 
     indexes = await collection.index_information()
     assert "_id_" in indexes
@@ -226,8 +222,7 @@ async def test_async_thingy_create_indexes(TestThingy, collection):
 
 
 def test_thingy_distinct(TestThingy, collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     assert set(TestThingy.distinct("bar")) == {"baz", "qux"}
 
     collection.insert_one({"bar": None})
@@ -235,8 +230,7 @@ def test_thingy_distinct(TestThingy, collection):
 
 
 async def test_async_thingy_distinct(TestThingy, collection):
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     assert set(await TestThingy.distinct("bar")) == {"baz", "qux"}
 
     await collection.insert_one({"bar": None})
@@ -244,8 +238,7 @@ async def test_async_thingy_distinct(TestThingy, collection):
 
 
 def test_thingy_find(TestThingy, collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     cursor = TestThingy.find()
     assert len(list(cursor.clone())) == 2
 
@@ -255,8 +248,7 @@ def test_thingy_find(TestThingy, collection):
 
 
 async def test_async_thingy_find(TestThingy, collection):
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     cursor = TestThingy.find()
     assert len(await cursor.clone().to_list(length=10)) == 2
 
@@ -266,8 +258,7 @@ async def test_async_thingy_find(TestThingy, collection):
 
 
 def test_thingy_find_one(TestThingy, collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     thingy = TestThingy.find_one()
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baz"
@@ -290,16 +281,14 @@ def test_thingy_find_one(TestThingy, collection):
 
 @pytest.mark.ignore_backends("montydb")
 def test_thingy_find_one_and_replace(TestThingy, collection):
-    collection.insert_many([{"bar": "baz"},
-                            {"bar": "qux"}])
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     thingy = TestThingy.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baaz"
 
 
 async def test_async_thingy_find_one_and_replace(TestThingy, collection):
-    await collection.insert_many([{"bar": "baz"},
-                                  {"bar": "qux"}])
+    await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     thingy = await TestThingy.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baaz"
@@ -379,7 +368,9 @@ def test_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
     assert TestVersionedThingy.count_documents() == 1
 
 
-async def test_async_versioned_thingy_save_force_insert(TestVersionedThingy, collection):
+async def test_async_versioned_thingy_save_force_insert(
+    TestVersionedThingy, collection
+):
     thingy = await TestVersionedThingy().save(force_insert=True)
 
     with pytest.raises(Exception, match="[dD]uplicate [kK]ey [eE]rror"):
@@ -413,8 +404,7 @@ async def test_create_indexes(is_async, thingy_cls, database):
 
     class Bar(thingy_cls):
         _database = database
-        _indexes = [("bar", {"unique": True}),
-                    ("baz", {"sparse": True})]
+        _indexes = [("bar", {"unique": True}), ("baz", {"sparse": True})]
 
     create_indexes()
     if is_async:
