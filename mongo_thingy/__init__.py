@@ -107,13 +107,13 @@ class BaseThingy(DatabaseThingy):
         return cls.count_documents(filter=filter, *args, **kwargs)
 
     @classmethod
-    def connect(cls, *args, client_cls=None, **kwargs):
+    def connect(cls, *args, client_cls=None, database_name=None, **kwargs):
         if not client_cls:
             client_cls = cls._client_cls
 
         cls._client = client_cls(*args, **kwargs)
         try:
-            cls._database = cls._client.get_database()
+            cls._database = cls._client.get_database(database_name)
         except (ConfigurationError, TypeError):
             cls._database = cls._client["test"]
 

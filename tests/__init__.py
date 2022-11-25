@@ -156,6 +156,13 @@ def test_connect_disconnect(thingy_cls, client_cls):
     disconnect()
     assert thingy_cls._client is None
 
+    connect(client_cls=client_cls, database_name="database")
+    assert isinstance(thingy_cls.client, client_cls)
+    assert thingy_cls._database.name == "database"
+
+    disconnect()
+    assert thingy_cls._client is None
+
     thingy_cls._client_cls = client_cls
     connect()
     assert isinstance(thingy_cls.client, client_cls)
