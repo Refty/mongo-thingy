@@ -1,6 +1,6 @@
 import pytest
 
-from mongo_thingy import Thingy
+from mongo_thingy import Thingy, ThingyList
 from mongo_thingy.cursor import (
     AsyncCursor,
     Cursor,
@@ -66,6 +66,23 @@ def test_binding_proxy():
 
     assert isinstance(foo, Thingy)
     assert foo.bar == "baz"
+
+
+def test_cursor_result_cls():
+    cursor = Cursor(None)
+    assert cursor.result_cls == list
+
+    class Foo(Thingy):
+        pass
+
+    cursor = Cursor(None, thingy_cls=Foo)
+    assert cursor.result_cls == ThingyList
+
+    class Foo(Thingy):
+        _result_cls = set
+
+    cursor = Cursor(None, thingy_cls=Foo)
+    assert cursor.result_cls == set
 
 
 def test_cursor_bind():
@@ -230,6 +247,8 @@ def test_cursor_to_list(thingy_cls, collection):
     cursor = Cursor(collection.find(), thingy_cls=Foo)
 
     results = cursor.to_list(length=10)
+    assert isinstance(results, ThingyList)
+
     assert isinstance(results[0], Foo)
     assert results[0].bar == "baz"
 
@@ -245,6 +264,8 @@ async def test_async_cursor_to_list(thingy_cls, collection):
     cursor = AsyncCursor(collection.find(), thingy_cls=Foo)
 
     results = await cursor.to_list(length=10)
+    assert isinstance(results, ThingyList)
+
     assert isinstance(results[0], Foo)
     assert results[0].bar == "baz"
 

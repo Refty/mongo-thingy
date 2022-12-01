@@ -3,7 +3,38 @@ import asyncio
 import pytest
 from bson import ObjectId
 
-from mongo_thingy import connect, create_indexes, disconnect, registry
+from mongo_thingy import (
+    Thingy,
+    ThingyList,
+    connect,
+    create_indexes,
+    disconnect,
+    registry,
+)
+
+
+async def test_thingy_list_distinct_thingies():
+    foos = ThingyList()
+    foos.append(Thingy())
+    foos.append(Thingy())
+    foos.append(Thingy(bar="baz"))
+    foos.append(Thingy(bar="qux"))
+
+    distinct = foos.distinct("bar")
+    assert distinct.count(None) == 1
+    assert set(distinct) == {None, "baz", "qux"}
+
+
+async def test_thingy_list_distinct_dicts():
+    foos = ThingyList()
+    foos.append({})
+    foos.append({})
+    foos.append({"bar": "baz"})
+    foos.append({"bar": "qux"})
+
+    distinct = foos.distinct("bar")
+    assert distinct.count(None) == 1
+    assert set(distinct) == {None, "baz", "qux"}
 
 
 @pytest.mark.all_backends

@@ -41,7 +41,7 @@ class _AsyncBindingProxy(_Proxy):
         async def wrapper(*args, **kwargs):
             result = await method(*args, **kwargs)
             if isinstance(result, list):
-                return [cursor.bind(r) for r in result]
+                return cursor.result_cls(cursor.bind(r) for r in result)
             return cursor.bind(result)
 
         return wrapper
@@ -57,6 +57,7 @@ class BaseCursor:
     def __init__(self, delegate, thingy_cls=None, view=None):
         self.delegate = delegate
         self.thingy_cls = thingy_cls
+        self.result_cls = getattr(thingy_cls, "_result_cls", list)
 
         if isinstance(view, str):
             view = self.get_view(view)
@@ -100,7 +101,7 @@ class Cursor(BaseCursor):
 
     def to_list(self, length):
         self.limit(length)
-        return list(self)
+        return self.result_cls(self)
 
     def delete(self):
         ids = self.distinct("_id")

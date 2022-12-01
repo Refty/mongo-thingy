@@ -19,6 +19,17 @@ except ImportError:  # pragma: no cover
     AsyncIOMotorClient = None
 
 
+class ThingyList(list):
+    def distinct(self, key):
+        def __get_value(document):
+            if hasattr(document, "__dict__"):
+                document = document.__dict__
+            return document.get(key)
+
+        values = set(__get_value(result) for result in self)
+        return list(values)
+
+
 class BaseThingy(DatabaseThingy):
     """Represents a document in a collection"""
 
@@ -27,6 +38,7 @@ class BaseThingy(DatabaseThingy):
     _collection = None
     _collection_name = None
     _cursor_cls = None
+    _result_cls = ThingyList
 
     @classproperty
     def _table(cls):
