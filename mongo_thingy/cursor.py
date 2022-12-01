@@ -98,6 +98,10 @@ class Cursor(BaseCursor):
         document = self.delegate.__getitem__(index)
         return self.bind(document)
 
+    def to_list(self, length):
+        self.limit(length)
+        return list(self)
+
     def delete(self):
         ids = self.distinct("_id")
         return self.thingy_cls.collection.delete_many({"_id": {"$in": ids}})

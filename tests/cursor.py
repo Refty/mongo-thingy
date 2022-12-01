@@ -222,6 +222,21 @@ async def test_async_cursor_next(thingy_cls, collection):
     assert result.bar == "qux"
 
 
+def test_cursor_to_list(thingy_cls, collection):
+    class Foo(thingy_cls):
+        _collection = collection
+
+    collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
+    cursor = Cursor(collection.find(), thingy_cls=Foo)
+
+    results = cursor.to_list(length=10)
+    assert isinstance(results[0], Foo)
+    assert results[0].bar == "baz"
+
+    assert isinstance(results[1], Foo)
+    assert results[1].bar == "qux"
+
+
 async def test_async_cursor_to_list(thingy_cls, collection):
     class Foo(thingy_cls):
         _collection = collection
