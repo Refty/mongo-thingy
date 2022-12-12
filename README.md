@@ -3,6 +3,7 @@
 [mongomock]: https://github.com/mongomock/mongomock
 [montydb]: https://github.com/davidlatwe/montydb
 [motor]: https://github.com/mongodb/motor
+[mongomock-motor]: https://github.com/michaelkryukov/mongomock_motor
 
 ![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light)
 
@@ -56,6 +57,7 @@ As a backend, Mongo-Thingy supports the following libraries:
 
   * [Motor][motor] (default when Motor is installed)
   * [Motor][motor] with Tornado (default when Motor and Tornado are installed)
+  * [Mongomock-Motor][mongomock-motor]
 
 # Install
 
