@@ -66,6 +66,26 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("backend", _backends)
 
 
+def pytest_collection_modifyitems(config, items):
+    if not config.getoption("--backend"):
+        return items
+
+    selected_items = []
+    deselected_items = []
+
+    for item in items:
+        if (
+            "backend" in item.fixturenames
+            and item.callspec.getparam("backend") not in backends
+        ):
+            deselected_items.append(item)
+        else:
+            selected_items.append(item)
+
+    config.hook.pytest_deselected(items=deselected_items)
+    items[:] = selected_items
+
+
 @pytest.fixture
 def client_cls(backend):
     client_cls = backends[backend]
