@@ -27,6 +27,11 @@ try:
 except ImportError:
     AsyncIOMotorClient = None
 
+try:
+    from mongomock_motor import AsyncMongoMockClient
+except ImportError:
+    AsyncMongoMockClient = None
+
 sync_backends = {
     "pymongo": MongoClient,
     "mongomock": MongomockClient,
@@ -36,6 +41,7 @@ sync_backends = {
 async_backends = {
     "motor_tornado": MotorClient,
     "motor_asyncio": AsyncIOMotorClient,
+    "mongomock_motor": AsyncMongoMockClient,
 }
 
 backends = {**sync_backends, **async_backends}
