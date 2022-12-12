@@ -41,7 +41,6 @@ async def test_async_versioned_get_revisions(TestVersionedThingy):
     cursor = thingy.get_revisions()
     assert isinstance(cursor, AsyncCursor)
 
-    print(await thingy.get_revisions().to_list(length=10))
     revision = await cursor.first()
     assert revision.document == thingy.__dict__
     assert revision.document_type == "TestVersionedThingy"
@@ -145,17 +144,11 @@ def test_versioned_revisions_operation(TestVersionedThingy):
 async def test_async_versioned_revisions_operation(TestVersionedThingy):
     thingy = await TestVersionedThingy({"bar": "baz"}).save()
     revisions = await thingy.get_revisions().to_list(length=10)
-    from pprint import pprint
-
-    pprint(revisions)
     assert revisions[0].operation == "create"
 
     thingy.bar = "qux"
     await thingy.save()
     revisions = await thingy.get_revisions().to_list(length=10)
-    from pprint import pprint
-
-    pprint(revisions)
     assert revisions[1].operation == "update"
 
     await thingy.delete()
