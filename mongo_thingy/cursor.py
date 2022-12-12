@@ -109,7 +109,7 @@ class Cursor(BaseCursor):
 
     def first(self):
         try:
-            document = self.delegate.clone().limit(-1).next()
+            document = self.delegate.clone().limit(-1).__next__()
         except StopIteration:
             return None
         return self.bind(document)
@@ -129,7 +129,7 @@ class AsyncCursor(BaseCursor):
 
     async def first(self):
         try:
-            document = await self.delegate.clone().limit(-1).next()
+            document = await self.delegate.clone().limit(-1).__anext__()
         except StopAsyncIteration:
             return None
         return self.bind(document)
