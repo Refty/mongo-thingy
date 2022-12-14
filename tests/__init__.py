@@ -37,6 +37,23 @@ async def test_thingy_list_distinct_dicts():
     assert set(distinct) == {None, "baz", "qux"}
 
 
+async def test_thingy_list_view():
+    class Foo(Thingy):
+        pass
+
+    Foo.add_view("empty")
+    foos = ThingyList()
+    foos.append(Foo(bar="baz"))
+    foos.append(Foo(bar="qux"))
+
+    for foo in foos.view("empty"):
+        assert foo == {}
+
+    foos.append({})
+    with pytest.raises(TypeError):
+        foos.view("empty")
+
+
 @pytest.mark.all_backends
 async def test_base_thingy_database(TestThingy, database):
     assert TestThingy.database == database

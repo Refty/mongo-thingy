@@ -155,7 +155,19 @@ User({'_id': ObjectId(...), 'name': 'Mr. Foo', 'age': 1337})
 ### Apply views on cursors
 
 ```python
->>> for credentials in User.find().view("credentials"):
+>>> cursor = User.find()
+>>> for credentials in cursor.view("credentials"):
+...     print(credentials)
+{'username': 'MrFoo', 'password': 't0ps3cr3t'}
+{'username': 'MrsBar', 'password': '123456789'}
+...
+```
+
+And if your cursor is already exhausted, you can still apply a view!
+
+```python
+>>> users = User.find().to_list(None)
+>>> for credentials in users.view("credentials"):
 ...     print(credentials)
 {'username': 'MrFoo', 'password': 't0ps3cr3t'}
 {'username': 'MrsBar', 'password': '123456789'}

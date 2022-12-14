@@ -29,6 +29,14 @@ class ThingyList(list):
         values = set(__get_value(item) for item in self)
         return list(values)
 
+    def view(self, name="defaults"):
+        def __view(item):
+            if not isinstance(item, BaseThingy):
+                raise TypeError(f"Can't view type {type(item)}.")
+            return item.view(name)
+
+        return [__view(item) for item in self]
+
 
 class BaseThingy(DatabaseThingy):
     """Represents a document in a collection"""
