@@ -21,12 +21,12 @@ except ImportError:  # pragma: no cover
 
 class ThingyList(list):
     def distinct(self, key):
-        def __get_value(document):
-            if hasattr(document, "__dict__"):
-                document = document.__dict__
-            return document.get(key)
+        def __get_value(item):
+            if isinstance(item, BaseThingy):
+                item = item.view()
+            return item.get(key)
 
-        values = set(__get_value(result) for result in self)
+        values = set(__get_value(item) for item in self)
         return list(values)
 
 
