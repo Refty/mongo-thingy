@@ -168,6 +168,13 @@ class BaseThingy(DatabaseThingy):
 
         return cls.collection.delete_one(filter, *args, **kwargs)
 
+    @classmethod
+    def update_one(cls, filter, update, *args, **kwargs):
+        if filter is not None and not isinstance(filter, Mapping):
+            filter = {"_id": filter}
+
+        return cls.collection.update_one(filter, update, *args, **kwargs)
+
     @property
     def id(self):
         return self.__dict__.get("id") or self._id
