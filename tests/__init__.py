@@ -328,6 +328,27 @@ def test_thingy_find_one(TestThingy, collection):
     assert thingy is None
 
 
+def test_thingy_delete_one(TestThingy, collection):
+    collection.insert_many(
+        [{"foo": "bar"}, {"bar": "qux"}, {"bar": "baz"}, {"bar": "baz"}]
+    )
+    TestThingy.delete_one({"foo": "bar"})
+    assert TestThingy.find_one({"foo": "bar"}) is None
+
+    qux = TestThingy.find_one({"bar": "qux"})
+
+    TestThingy.delete_one(qux.id)
+    assert TestThingy.find_one({"bar": "qux"}) is None
+
+    TestThingy.delete_one(qux.id)
+    assert TestThingy.find_one({"bar": "qux"}) is None
+
+    TestThingy.delete_one({"bar": "baz"})
+    assert TestThingy.find_one({"bar": "baz"}) is not None
+    TestThingy.delete_one({"bar": "baz"})
+    assert TestThingy.find_one({"bar": "baz"}) is None
+
+
 @pytest.mark.ignore_backends("montydb")
 def test_thingy_find_one_and_replace(TestThingy, collection):
     collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])

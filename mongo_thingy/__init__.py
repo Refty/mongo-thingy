@@ -161,6 +161,13 @@ class BaseThingy(DatabaseThingy):
         cursor = cls.find(filter, *args, **kwargs)
         return cursor.first()
 
+    @classmethod
+    def delete_one(cls, filter=None, *args, **kwargs):
+        if filter is not None and not isinstance(filter, Mapping):
+            filter = {"_id": filter}
+
+        return cls.collection.delete_one(filter, *args, **kwargs)
+
     @property
     def id(self):
         return self.__dict__.get("id") or self._id
