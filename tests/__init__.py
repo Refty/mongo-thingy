@@ -349,6 +349,58 @@ def test_thingy_delete_one(TestThingy, collection):
     assert TestThingy.find_one({"bar": "baz"}) is None
 
 
+def test_thingy_update_one(TestThingy, collection):
+    collection.insert_many(
+        [{"foo": "bar"}, {"bar": "qux"}, {"bar": "baz"}, {"bar": "baz"}]
+    )
+    updated = TestThingy.update_one({"bar": "baz"}, {"$set": {"bar": "baaz"}})
+    assert updated.acknowledged
+    assert updated.matched_count == 1
+    assert updated.modified_count == 1
+    assert TestThingy.find_one({"bar": "baz"}) is not None
+
+    updated = TestThingy.update_one({"bar": "baz"}, {"$set": {"bar": "baaz"}})
+    assert updated.acknowledged
+    assert updated.matched_count == 1
+    assert updated.modified_count == 1
+    assert TestThingy.find_one({"bar": "baz"}) is None
+
+    foo = TestThingy.find_one({"foo": "bar"})
+    TestThingy.update_one(foo.id, {"$set": {"new_field": "foo"}})
+    assert updated.acknowledged
+    assert updated.matched_count == 1
+    assert updated.modified_count == 1
+    thingy = TestThingy.find_one({"foo": "bar"})
+    assert thingy.foo == "bar"
+    assert thingy.new_field == "foo"
+
+    updated = TestThingy.update_one(
+        {"new": "new"}, {"$set": {"bar": "baaz"}}, upsert=False
+    )
+    assert updated.acknowledged
+    assert updated.matched_count == 0
+    assert updated.modified_count == 0
+    assert TestThingy.find_one({"new": "new"}) is None
+
+    updated = TestThingy.update_one(
+        {"new": "new"}, {"$set": {"bar": "baaz"}}, upsert=True
+    )
+    assert updated.acknowledged
+    assert updated.matched_count == 0
+    assert updated.modified_count == 0
+    assert TestThingy.find_one({"new": "new"}).bar == "baaz"
+
+    updated = TestThingy.update_one(
+        {"new": "new"}, {"$set": {"already": "exists"}}, upsert=True
+    )
+    assert updated.acknowledged
+    assert updated.matched_count == 1
+    assert updated.modified_count == 1
+    new = TestThingy.find_one({"new": "new"})
+    assert new.already == "exists"
+    assert new.bar == "baaz"
+
+
 @pytest.mark.ignore_backends("montydb")
 def test_thingy_find_one_and_replace(TestThingy, collection):
     collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
