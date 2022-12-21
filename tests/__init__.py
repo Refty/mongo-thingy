@@ -458,12 +458,20 @@ def test_thingy_find_one_and_replace(TestThingy, collection):
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baaz"
 
+    thingy = TestThingy.find_one_and_replace(thingy.id, {"bar": "baaaz"})
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baaaz"
+
 
 async def test_async_thingy_find_one_and_replace(TestThingy, collection):
     await collection.insert_many([{"bar": "baz"}, {"bar": "qux"}])
     thingy = await TestThingy.find_one_and_replace({"bar": "baz"}, {"bar": "baaz"})
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "baaz"
+
+    thingy = await TestThingy.find_one_and_replace(thingy.id, {"bar": "baaaz"})
+    assert isinstance(thingy, TestThingy)
+    assert thingy.bar == "baaaz"
 
 
 @pytest.mark.all_backends

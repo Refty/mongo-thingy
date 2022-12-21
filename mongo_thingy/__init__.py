@@ -214,9 +214,14 @@ class Thingy(BaseThingy):
                 cls.collection.create_index(keys, **kwargs)
 
     @classmethod
-    def find_one_and_replace(cls, *args, **kwargs):
+    def find_one_and_replace(cls, filter, replacement, *args, **kwargs):
+        if filter is not None and not isinstance(filter, Mapping):
+            filter = {"_id": filter}
+
         kwargs.setdefault("return_document", ReturnDocument.AFTER)
-        result = cls.collection.find_one_and_replace(*args, **kwargs)
+        result = cls.collection.find_one_and_replace(
+            filter, replacement, *args, **kwargs
+        )
         if result is not None:
             return cls(result)
 
@@ -246,9 +251,14 @@ class AsyncThingy(BaseThingy):
                 await cls.collection.create_index(keys, **kwargs)
 
     @classmethod
-    async def find_one_and_replace(cls, *args, **kwargs):
+    async def find_one_and_replace(cls, filter, replacement, *args, **kwargs):
+        if filter is not None and not isinstance(filter, Mapping):
+            filter = {"_id": filter}
+
         kwargs.setdefault("return_document", ReturnDocument.AFTER)
-        result = await cls.collection.find_one_and_replace(*args, **kwargs)
+        result = await cls.collection.find_one_and_replace(
+            filter, replacement, *args, **kwargs
+        )
         if result is not None:
             return cls(result)
 
