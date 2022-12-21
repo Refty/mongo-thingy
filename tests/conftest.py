@@ -1,6 +1,7 @@
 import inspect
 
 import pytest
+from _pytest.compat import get_real_func
 from pymongo import MongoClient
 
 from mongo_thingy import AsyncThingy, BaseThingy, Thingy
@@ -49,8 +50,7 @@ def pytest_generate_tests(metafunc):
     if "backend" in metafunc.fixturenames:
         if metafunc.definition.get_closest_marker("all_backends"):
             _backends = backends.keys()
-        elif inspect.getsource(metafunc.function)[0:5] == "async":
-            # pytest-asyncio has wrapped the async function in a sync function
+        elif inspect.iscoroutinefunction(get_real_func(metafunc.function)):
             _backends = async_backends.keys()
         else:
             _backends = sync_backends.keys()
