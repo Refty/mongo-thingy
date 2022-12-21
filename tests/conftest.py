@@ -59,6 +59,10 @@ def pytest_generate_tests(metafunc):
         if option:
             _backends = [b for b in _backends if b == option]
 
+        marker = metafunc.definition.get_closest_marker("only_backends")
+        if marker:
+            _backends = [b for b in _backends if b in marker.args]
+
         marker = metafunc.definition.get_closest_marker("ignore_backends")
         if marker:
             _backends = [b for b in _backends if b not in marker.args]

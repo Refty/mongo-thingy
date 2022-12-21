@@ -225,13 +225,18 @@ class Thingy(BaseThingy):
         if result is not None:
             return cls(result)
 
-    def save(self, force_insert=False):
+    def save(self, force_insert=False, refresh=False):
         data = self.__dict__
+        collection = self.get_collection()
+
         if self.id is not None and not force_insert:
             filter = {"_id": self.id}
-            self.get_collection().replace_one(filter, data, upsert=True)
+            collection.replace_one(filter, data, upsert=True)
         else:
-            self.get_collection().insert_one(data)
+            collection.insert_one(data)
+
+        if refresh:
+            self.__dict__ = collection.find_one(self.id)
         return self
 
 
@@ -262,13 +267,18 @@ class AsyncThingy(BaseThingy):
         if result is not None:
             return cls(result)
 
-    async def save(self, force_insert=False):
+    async def save(self, force_insert=False, refresh=False):
         data = self.__dict__
+        collection = self.get_collection()
+
         if self.id is not None and not force_insert:
             filter = {"_id": self.id}
-            await self.get_collection().replace_one(filter, data, upsert=True)
+            await collection.replace_one(filter, data, upsert=True)
         else:
-            await self.get_collection().insert_one(data)
+            await collection.insert_one(data)
+
+        if refresh:
+            self.__dict__ = await collection.find_one(self.id)
         return self
 
 

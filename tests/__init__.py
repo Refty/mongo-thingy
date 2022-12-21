@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timezone
 
 import pytest
 from bson import ObjectId
@@ -508,6 +509,24 @@ def test_thingy_save(TestThingy, collection):
     assert thingy._id == "bar"
 
 
+@pytest.mark.only_backends("pymongo")
+def test_thingy_save_refresh(TestThingy):
+    created_at = datetime.now(timezone.utc)
+
+    thingy = TestThingy(created_at=created_at).save()
+    assert thingy.created_at == created_at
+
+    thingy = thingy.save(refresh=True)
+    assert thingy.created_at != created_at
+
+    approx = created_at.replace(microsecond=0, tzinfo=None)
+    saved_approx = thingy.created_at.replace(microsecond=0, tzinfo=None)
+    assert approx == saved_approx
+
+    assert TestThingy.find_one().created_at != created_at
+    assert TestThingy.find_one().created_at == thingy.created_at
+
+
 async def test_async_thingy_save(TestThingy, collection):
     thingy = TestThingy(bar="baz")
     assert await TestThingy.count_documents() == 0
@@ -519,6 +538,24 @@ async def test_async_thingy_save(TestThingy, collection):
     assert isinstance(thingy, TestThingy)
     assert thingy.bar == "qux"
     assert thingy._id == "bar"
+
+
+@pytest.mark.only_backends("motor_asyncio", "motor_tornado")
+async def test_async_thingy_save_refresh(TestThingy):
+    created_at = datetime.now(timezone.utc)
+
+    thingy = await TestThingy(created_at=created_at).save()
+    assert thingy.created_at == created_at
+
+    thingy = await thingy.save(refresh=True)
+    assert thingy.created_at != created_at
+
+    approx = created_at.replace(microsecond=0, tzinfo=None)
+    saved_approx = thingy.created_at.replace(microsecond=0, tzinfo=None)
+    assert approx == saved_approx
+
+    assert (await TestThingy.find_one()).created_at != created_at
+    assert (await TestThingy.find_one()).created_at == thingy.created_at
 
 
 def test_thingy_save_force_insert(TestThingy, collection):
