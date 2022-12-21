@@ -328,6 +328,19 @@ def test_thingy_find_one(TestThingy, collection):
     assert thingy is None
 
 
+def test_thingy_delete_many(TestThingy, collection):
+    collection.insert_many(
+        [{"foo": "bar"}, {"bar": "qux"}, {"bar": "baz"}, {"bar": "baz"}]
+    )
+    TestThingy.delete_many({"foo": "bar"})
+    assert TestThingy.find_one({"foo": "bar"}) is None
+
+    assert TestThingy.find_one({"bar": "qux"})
+
+    TestThingy.delete_many({"bar": "baz"})
+    assert TestThingy.find_one({"bar": "baz"}) is None
+
+
 def test_thingy_delete_one(TestThingy, collection):
     collection.insert_many(
         [{"foo": "bar"}, {"bar": "qux"}, {"bar": "baz"}, {"bar": "baz"}]
@@ -347,6 +360,43 @@ def test_thingy_delete_one(TestThingy, collection):
     assert TestThingy.find_one({"bar": "baz"}) is not None
     TestThingy.delete_one({"bar": "baz"})
     assert TestThingy.find_one({"bar": "baz"}) is None
+
+
+def test_thingy_update_many(TestThingy, collection):
+    collection.insert_many(
+        [{"foo": "bar"}, {"bar": "qux"}, {"bar": "baz"}, {"bar": "baz"}]
+    )
+    updated = TestThingy.update_many({"bar": "baz"}, {"$set": {"bar": "baaz"}})
+    assert updated.acknowledged
+    assert updated.matched_count == 2
+    assert updated.modified_count == 2
+    assert TestThingy.find_one({"bar": "baz"}) is None
+
+    updated = TestThingy.update_many(
+        {"new": "new"}, {"$set": {"bar": "baaz"}}, upsert=False
+    )
+    assert updated.acknowledged
+    assert updated.matched_count == 0
+    assert updated.modified_count == 0
+    assert TestThingy.find_one({"new": "new"}) is None
+
+    updated = TestThingy.update_many(
+        {"new": "new"}, {"$set": {"bar": "baaz"}}, upsert=True
+    )
+    assert updated.acknowledged
+    assert updated.matched_count == 0
+    assert updated.modified_count == 0
+    assert TestThingy.find_one({"new": "new"}).bar == "baaz"
+
+    updated = TestThingy.update_many(
+        {"new": "new"}, {"$set": {"already": "exists"}}, upsert=True
+    )
+    assert updated.acknowledged
+    assert updated.matched_count == 1
+    assert updated.modified_count == 1
+    new = TestThingy.find_one({"new": "new"})
+    assert new.already == "exists"
+    assert new.bar == "baaz"
 
 
 def test_thingy_update_one(TestThingy, collection):

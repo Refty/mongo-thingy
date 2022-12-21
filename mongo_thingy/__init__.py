@@ -162,11 +162,19 @@ class BaseThingy(DatabaseThingy):
         return cursor.first()
 
     @classmethod
+    def delete_many(cls, filter=None, *args, **kwargs):
+        return cls.collection.delete_many(filter, *args, **kwargs)
+
+    @classmethod
     def delete_one(cls, filter=None, *args, **kwargs):
         if filter is not None and not isinstance(filter, Mapping):
             filter = {"_id": filter}
 
         return cls.collection.delete_one(filter, *args, **kwargs)
+
+    @classmethod
+    def update_many(cls, filter, update, *args, **kwargs):
+        return cls.collection.update_many(filter, update, *args, **kwargs)
 
     @classmethod
     def update_one(cls, filter, update, *args, **kwargs):
