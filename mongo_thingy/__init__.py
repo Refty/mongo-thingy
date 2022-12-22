@@ -295,12 +295,18 @@ def disconnect(*args, **kwargs):
 
 def create_indexes():
     """Create indexes registered on all :class:`Thingy`"""
+    tasks = []
+
     for cls in registry:
         if issubclass(cls, Thingy):
             cls.create_indexes()
         if issubclass(cls, AsyncThingy):
             coroutine = cls.create_indexes()
-            asyncio.create_task(coroutine)
+            task = asyncio.create_task(coroutine)
+            tasks.append(task)
+
+    if tasks:
+        return asyncio.wait(tasks)
 
 
 __all__ = ["AsyncThingy", "Thingy", "connect", "create_indexes"]
