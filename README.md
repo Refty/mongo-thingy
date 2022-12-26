@@ -12,7 +12,7 @@
     <a href="LICENSE"><img src="https://img.shields.io/github/license/refty/mongo-thingy" alt="License"></a>
     <a href="https://github.com/ambv/black"><img src="https://img.shields.io/badge/code%20style-black-black" alt="Code style"></a>
     <br/>
-    <a href="https://github.com/Refty/mongo-thingy/actions"><img src="https://img.shields.io/github/workflow/status/Refty/mongo-thingy/Tests" alt="Tests"></a>
+    <a href="https://github.com/Refty/mongo-thingy/actions"><img src="https://img.shields.io/github/actions/workflow/status/Refty/mongo-thingy/tests.yml?branch=master" alt="Tests"></a>
     <a href="https://coveralls.io/github/Refty/mongo-thingy"><img src="https://img.shields.io/coveralls/Refty/mongo-thingy.svg" alt="Tests"></a>
     <a href="http://mongo-thingy.readthedocs.io"><img src="https://readthedocs.org/projects/mongo-thingy/badge" alt="Docs"></a>
     <br /><br />
