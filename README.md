@@ -265,6 +265,25 @@ Collection(Database(MongoClient('localhost', 27017), 'database'), 'bar')
 >>> create_indexes()
 ```
 
+## Dealing with camelCase data
+
+```python
+>>> from mongo_thingy.camelcase import CamelCase
+
+>>> class SystemUser(CamelCase, Thingy):
+...     collection_name = "systemUsers"
+
+>>> user = SystemUser.find_one()
+>>> user.view()
+{'_id': ObjectId(...), 'firstName': 'John', 'lastName': 'Doe'}
+
+>>> user.first_name
+'John'
+>>> user.first_name = "Jonny"
+>>> user.save()
+SystemUser({'_id': ObjectId(...), firstName: 'Jonny', lastName: 'Doe'})
+```
+
 # Tests
 
 To run the tests suite:
