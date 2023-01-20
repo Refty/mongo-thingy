@@ -100,7 +100,8 @@ class Cursor(BaseCursor):
         return self.bind(document)
 
     def to_list(self, length):
-        self.limit(length)
+        if length is not None:
+            self.limit(length)
         return self.result_cls(self)
 
     def delete(self):
