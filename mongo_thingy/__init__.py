@@ -225,6 +225,18 @@ class Thingy(BaseThingy):
         if result is not None:
             return cls(result)
 
+    @classmethod
+    def find_one_and_update(cls, filter, replacement, *args, **kwargs):
+        if filter is not None and not isinstance(filter, Mapping):
+            filter = {"_id": filter}
+
+        kwargs.setdefault("return_document", ReturnDocument.AFTER)
+        result = cls.collection.find_one_and_update(
+            filter, replacement, *args, **kwargs
+        )
+        if result is not None:
+            return cls(result)
+
     def save(self, force_insert=False, refresh=False):
         data = self.__dict__
         collection = self.get_collection()
@@ -262,6 +274,18 @@ class AsyncThingy(BaseThingy):
 
         kwargs.setdefault("return_document", ReturnDocument.AFTER)
         result = await cls.collection.find_one_and_replace(
+            filter, replacement, *args, **kwargs
+        )
+        if result is not None:
+            return cls(result)
+
+    @classmethod
+    async def find_one_and_update(cls, filter, replacement, *args, **kwargs):
+        if filter is not None and not isinstance(filter, Mapping):
+            filter = {"_id": filter}
+
+        kwargs.setdefault("return_document", ReturnDocument.AFTER)
+        result = await cls.collection.find_one_and_update(
             filter, replacement, *args, **kwargs
         )
         if result is not None:
