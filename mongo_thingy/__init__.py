@@ -231,9 +231,7 @@ class Thingy(BaseThingy):
             filter = {"_id": filter}
 
         kwargs.setdefault("return_document", ReturnDocument.AFTER)
-        result = cls.collection.find_one_and_update(
-            filter, update, *args, **kwargs
-        )
+        result = cls.collection.find_one_and_update(filter, update, *args, **kwargs)
         if result is not None:
             return cls(result)
 
