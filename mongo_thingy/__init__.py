@@ -204,14 +204,13 @@ class Thingy(BaseThingy):
 
     @classmethod
     def create_index(cls, keys, **kwargs):
-        cls.add_index(keys, **kwargs)
         cls.collection.create_index(keys, **kwargs)
 
     @classmethod
     def create_indexes(cls):
         if hasattr(cls, "_indexes"):
             for keys, kwargs in cls._indexes:
-                cls.collection.create_index(keys, **kwargs)
+                cls.create_index(keys, **kwargs)
 
     @classmethod
     def find_one_and_replace(cls, filter, replacement, *args, **kwargs):
@@ -256,14 +255,13 @@ class AsyncThingy(BaseThingy):
 
     @classmethod
     async def create_index(cls, keys, **kwargs):
-        cls.add_index(keys, **kwargs)
         await cls.collection.create_index(keys, **kwargs)
 
     @classmethod
     async def create_indexes(cls):
         if hasattr(cls, "_indexes"):
             for keys, kwargs in cls._indexes:
-                await cls.collection.create_index(keys, **kwargs)
+                await cls.create_index(keys, **kwargs)
 
     @classmethod
     async def find_one_and_replace(cls, filter, replacement, *args, **kwargs):
