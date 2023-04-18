@@ -22,7 +22,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms="any",
-    install_requires=["thingy>=0.9.0", "pymongo>=4"],
+    install_requires=["thingy>=0.10.0", "pymongo>=4"],
     classifiers=[
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
