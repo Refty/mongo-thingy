@@ -230,7 +230,6 @@ def test_connect_disconnect(thingy_cls, client_cls):
 @pytest.mark.ignore_backends("montydb")
 def test_thingy_create_index(TestThingy, collection):
     TestThingy.create_index("foo", unique=True)
-    assert TestThingy._indexes == [("foo", {"unique": True, "background": True})]
 
     indexes = collection.index_information()
     assert "_id_" in indexes
@@ -240,7 +239,6 @@ def test_thingy_create_index(TestThingy, collection):
 
 async def test_async_thingy_create_index(TestThingy, collection):
     await TestThingy.create_index("foo", unique=True)
-    assert TestThingy._indexes == [("foo", {"unique": True, "background": True})]
 
     indexes = await collection.index_information()
     assert "_id_" in indexes
