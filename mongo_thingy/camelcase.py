@@ -2,17 +2,20 @@ import re
 
 from mongo_thingy import BaseThingy
 
+CAMELIZE_RE = re.compile(r"(?!^)_([a-zA-Z])")
+UNCAMELIZE_RE = re.compile(r"(?<!^)(?<![A-Z])[A-Z]")
+
 
 def camelize(string):
     if string.startswith("__"):
         return string
-    return re.sub(r"(?!^)_([a-zA-Z])", lambda m: m.group(1).upper(), string)
+    return re.sub(CAMELIZE_RE, lambda m: m.group(1).upper(), string)
 
 
 def uncamelize(string):
     if string.startswith("__"):
         return string
-    return re.sub(r"(?<!^)(?<![A-Z])[A-Z]", r"_\g<0>", string).lower()
+    return re.sub(UNCAMELIZE_RE, r"_\g<0>", string).lower()
 
 
 class CamelCase:
