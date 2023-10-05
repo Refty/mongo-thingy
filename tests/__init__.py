@@ -23,7 +23,7 @@ async def test_thingy_list_distinct_thingies():
 
     distinct = foos.distinct("bar")
     assert distinct.count(None) == 1
-    assert set(distinct) == {None, "baz", "qux"}
+    assert distinct == [None, "baz", "qux"]
 
 
 async def test_thingy_list_distinct_dicts():
@@ -35,7 +35,20 @@ async def test_thingy_list_distinct_dicts():
 
     distinct = foos.distinct("bar")
     assert distinct.count(None) == 1
-    assert set(distinct) == {None, "baz", "qux"}
+    assert distinct == [None, "baz", "qux"]
+
+
+# https://mongodb.com/docs/manual/reference/method/db.collection.distinct/#array-fields
+async def test_thingy_list_distinct_array_fields():
+    foos = ThingyList()
+    foos.append(Thingy())
+    foos.append(Thingy())
+    foos.append(Thingy(bar=[1, 2]))
+    foos.append(Thingy(bar=[2, 3, [3]]))
+
+    distinct = foos.distinct("bar")
+    assert distinct.count(None) == 1
+    assert distinct == [None, 1, 2, 3, [3]]
 
 
 async def test_thingy_list_view():

@@ -26,7 +26,19 @@ class ThingyList(list):
                 item = item.view()
             return item.get(key)
 
-        values = set(__get_value(item) for item in self)
+        values = []
+
+        def __append_value(value):
+            if value not in values:
+                values.append(value)
+
+        for item in self:
+            value = __get_value(item)
+            if isinstance(value, list):
+                for v in value:
+                    __append_value(v)
+            else:
+                __append_value(value)
         return list(values)
 
     def view(self, name="defaults"):
