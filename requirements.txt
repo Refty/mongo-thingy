@@ -1,5 +1,5 @@
 thingy==0.10.0
-pymongo==4.1.1
+pymongo==4.6.3
 mongomock==4.0.0
 mongomock-motor==0.0.14
 montydb==2.4.0
