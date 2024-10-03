@@ -18,7 +18,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - run: pip install coveralls && cat requirements.txt | xargs -n 1 pip install || true
-    - run: docker-compose up -d
+    - run: docker compose up -d
     - run: pytest
     - run: coveralls --service=github
       env:
