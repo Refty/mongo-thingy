@@ -5,7 +5,7 @@
 [motor]: https://github.com/mongodb/motor
 [mongomock-motor]: https://github.com/michaelkryukov/mongomock_motor
 
-![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=https%3A%2F%2Fi.imgur.com%2FLeNC7Zb.png&owner=1&pattern=Charlie%20Brown&theme=Light)
+![Mongo-Thingy](https://socialify.git.ci/Refty/mongo-thingy/image?font=Bitter&language=1&logo=data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%25201024%25201024%2522%253E%253Cdefs%253E%253Cstyle%253E.a%257Bfill%253A%252300684a%253B%257D%253C%252Fstyle%253E%253C%252Fdefs%253E%253Ctitle%253EMongoDB%253C%252Ftitle%253E%253Cpath%2520class%253D%2522a%2522%2520d%253D%2522M600.5%252C118.86C557.8%252C68.41%252C521%252C17.18%252C513.51%252C6.54a1.92%252C1.92%252C0%252C0%252C0-2.77%252C0c-7.51%252C10.64-44.29%252C61.87-87%252C112.32C57.19%252C584.3%252C481.48%252C898.4%252C481.48%252C898.4l3.56%252C2.37C488.2%252C949.24%252C496.11%252C1019%252C496.11%252C1019h31.63s7.91-69.36%252C11.08-118.23l3.55-2.76C542.77%252C898%252C967.06%252C584.3%252C600.5%252C118.86ZM511.93%252C891.31s-19-16.16-24.12-24.44v-.78l22.93-506.83a1.19%252C1.19%252C0%252C0%252C1%252C2.37%252C0l22.94%252C506.83v.78C530.91%252C875.15%252C511.93%252C891.31%252C511.93%252C891.31Z%2522%252F%253E%253C%252Fsvg%253E&owner=1&pattern=Charlie%20Brown&theme=Light)
 
 <div align="center">
     <a href="https://pypi.org/project/mongo-thingy"><img src="https://img.shields.io/pypi/v/mongo-thingy.svg" alt="PyPI"></a>
